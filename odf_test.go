@@ -1,10 +1,12 @@
 package odf
 
 import (
+	"odf/generators"
 	"odf/mappers"
 	"odf/model"
 	_ "odf/model/stub"
 	"odf/xmlns"
+	"os"
 	"testing"
 )
 
@@ -25,4 +27,15 @@ func TestMappers(t *testing.T) {
 	fm.ConnectTo(m)
 	fm.MimeType = xmlns.MimeText
 	fm.Init()
+}
+
+func TestGenerators(t *testing.T) {
+	output, _ := os.OpenFile("test0.odt", os.O_CREATE|os.O_WRONLY, 0666)
+	m := model.ModelFactory()
+	fm := &mappers.Formatter{}
+	fm.ConnectTo(m)
+	fm.MimeType = xmlns.MimeText
+	fm.Init()
+	generators.Generate(m, output, fm.MimeType)
+	output.Close()
 }
