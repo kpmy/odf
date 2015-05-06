@@ -26,9 +26,10 @@ type Manifest struct {
 	Entries []Entry `xml:"manifest:file-entry"`
 }
 
-func (m *Manifest) init() {
+func (m *Manifest) init(mimetype xmlns.Mime) {
 	m.XMLName.Local = "manifest:manifest"
 	m.NS = urn.Manifest
+	m.Entries = append(m.Entries, Entry{MediaType: string(mimetype), FullPath: "/"})
 }
 
 func docParts(m model.Model) (ret Parts) {
@@ -57,13 +58,12 @@ func docParts(m model.Model) (ret Parts) {
 
 func Generate(m model.Model, out io.Writer, mimetype xmlns.Mime) {
 	z := zip.NewWriter(out)
-	mime := &zip.FileHeader{Name: xmlns.Mimetype, Method: zip.Store}
+	mime := &zip.FileHeader{Name: xmlns.Mimetype, Method: zip.Store} //файл mimetype не надо сжимать, режим Store
 	if w, err := z.CreateHeader(mime); err == nil {
 		bytes.NewBufferString(string(mimetype)).WriteTo(w)
 	}
 	manifest := &Manifest{}
-	manifest.init()
-	manifest.Entries = append(manifest.Entries, Entry{MediaType: string(mimetype), FullPath: "/"})
+	manifest.init(mimetype)
 	for k, v := range docParts(m) {
 		if w, err := z.Create(k); err == nil {
 			v.WriteTo(w)

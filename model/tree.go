@@ -40,3 +40,4 @@ type Writer interface {
 }
 
 var ModelFactory func() Model
+var Text func(s string) Leaf

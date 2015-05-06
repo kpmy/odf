@@ -6,7 +6,6 @@ package stub
 
 import (
 	"encoding/xml"
-	"fmt"
 	"odf/model"
 	"ypk/assert"
 )
@@ -55,7 +54,6 @@ func (n *sn) init() {
 }
 
 func (n *sn) MarshalXML(e *xml.Encoder, start xml.StartElement) (err error) {
-	fmt.Println(n.name)
 	start.Name.Local = string(n.name)
 	for k, v := range n.attr {
 		a, err := v.(xml.MarshalerAttr).MarshalXMLAttr(xml.Name{Local: string(k)})
@@ -63,8 +61,13 @@ func (n *sn) MarshalXML(e *xml.Encoder, start xml.StartElement) (err error) {
 		start.Attr = append(start.Attr, a)
 	}
 	e.EncodeToken(start)
-	for _, v := range n.children {
-		err = e.EncodeElement(v, xml.StartElement{Name: xml.Name{Local: string(v.Name())}})
+	for _, _v := range n.children {
+		switch v := _v.(type) {
+		case *text:
+			err = e.EncodeToken(xml.CharData(v.data))
+		default:
+			err = e.EncodeElement(v, xml.StartElement{Name: xml.Name{Local: string(v.Name())}})
+		}
 		assert.For(err == nil, 30, err)
 	}
 	err = e.EncodeToken(start.End())
