@@ -5,6 +5,8 @@ package stub
 */
 
 import (
+	"encoding/xml"
+	"fmt"
 	"odf/model"
 	"ypk/assert"
 )
@@ -52,12 +54,34 @@ func (n *sn) init() {
 	n.children = make([]model.Leaf, 0)
 }
 
+func (n *sn) MarshalXML(e *xml.Encoder, start xml.StartElement) (err error) {
+	fmt.Println(n.name)
+	start.Name.Local = string(n.name)
+	for k, v := range n.attr {
+		a, err := v.(xml.MarshalerAttr).MarshalXMLAttr(xml.Name{Local: string(k)})
+		assert.For(err == nil, 30, err)
+		start.Attr = append(start.Attr, a)
+	}
+	e.EncodeToken(start)
+	for _, v := range n.children {
+		err = e.EncodeElement(v, xml.StartElement{Name: xml.Name{Local: string(v.Name())}})
+		assert.For(err == nil, 30, err)
+	}
+	err = e.EncodeToken(start.End())
+	assert.For(err == nil, 30, err)
+	return err
+}
+
 type sm struct {
 	root *sn
 }
 
-func (m *sm) NewReader(...model.Reader) model.Reader {
-	return nil
+func (m *sm) NewReader(old ...model.Reader) model.Reader {
+	r := &sr{base: m, eol: true}
+	if len(old) == 1 {
+		r.InitFrom(old[0])
+	}
+	return r
 }
 
 func (m *sm) NewWriter(old ...model.Writer) model.Writer {

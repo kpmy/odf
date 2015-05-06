@@ -30,7 +30,7 @@ func TestMappers(t *testing.T) {
 }
 
 func TestGenerators(t *testing.T) {
-	output, _ := os.OpenFile("test0.odt", os.O_CREATE|os.O_WRONLY, 0666)
+	output, _ := os.OpenFile("test0.odf", os.O_CREATE|os.O_WRONLY, 0666)
 	m := model.ModelFactory()
 	fm := &mappers.Formatter{}
 	fm.ConnectTo(m)

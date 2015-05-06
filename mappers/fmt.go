@@ -30,6 +30,7 @@ func (f *Formatter) Init() {
 	assert.For(f.MimeType != "", 20)
 	wr := f.m.NewWriter()
 	wr.Pos(f.m.Root())
+	wr.Write(New(office.DocumentMeta))
 	f.attr.Init(f.m)
 	wr.WritePos(New(office.DocumentContent))
 	wr.Attr(office.Version, "1.0")

@@ -25,6 +25,9 @@ type Model interface {
 type Reader interface {
 	InitFrom(Reader)
 	Base() Model
+	Read() Leaf
+	Eol() bool
+	Pos(...Leaf) Leaf
 }
 
 type Writer interface {

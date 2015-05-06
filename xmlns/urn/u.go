@@ -1,0 +1,26 @@
+package urn
+
+const (
+	Office       = "urn:oasis:names:tc:opendocument:xmlns:office:1.0"
+	Meta         = "urn:oasis:names:tc:opendocument:xmlns:meta:1.0"
+	Config       = "urn:oasis:names:tc:opendocument:xmlns:config:1.0"
+	Text         = "urn:oasis:names:tc:opendocument:xmlns:text:1.0"
+	Table        = "urn:oasis:names:tc:opendocument:xmlns:table:1.0"
+	Draw         = "urn:oasis:names:tc:opendocument:xmlns:drawing:1.0"
+	Presentation = "urn:oasis:names:tc:opendocument:xmlns:presentation:1.0"
+	Dr3d         = "urn:oasis:names:tc:opendocument:xmlns:dr3d:1.0"
+	Chart        = "urn:oasis:names:tc:opendocument:xmlns:chart:1.0"
+	Form         = "urn:oasis:names:tc:opendocument:xmlns:form:1.0"
+	Script       = "urn:oasis:names:tc:opendocument:xmlns:script:1.0"
+	Style        = "urn:oasis:names:tc:opendocument:xmlns:style:1.0"
+	Number       = "urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0"
+	Anim         = "urn:oasis:names:tc:opendocument:xmlns:animation:1.0"
+	Dc           = "http://purl.org/dc/elements/1.1/"
+	Xlink        = "http://www.w3.org/1999/xlink"
+	Math         = "http://www.w3.org/1998/Math/MathML"
+	Xforms       = "http://www.w3.org/2002/xforms"
+	Fo           = "urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0"
+	Svg          = "urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0"
+	Smil         = "urn:oasis:names:tc:opendocument:xmlns:smil-compatible:1.0"
+	Manifest     = "urn:oasis:names:tc:opendocument:xmlns:manifest:1.0"
+)
