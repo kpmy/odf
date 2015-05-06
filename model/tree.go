@@ -7,6 +7,7 @@ type Attribute interface {
 type Leaf interface {
 	Name() LeafName
 	Attr(AttrName, ...Attribute) Attribute
+	Parent(...Node) Node
 }
 
 type Node interface {

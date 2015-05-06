@@ -42,6 +42,8 @@ type AttrType int
 const (
 	NONE AttrType = iota
 	STRING
+	INT
+	ENUM
 )
 
 type Mime string
@@ -52,7 +54,9 @@ const (
 )
 
 var Typed map[model.AttrName]AttrType
+var Enums map[model.AttrName][]string
 
 func init() {
 	Typed = make(map[model.AttrName]AttrType)
+	Enums = make(map[model.AttrName][]string)
 }

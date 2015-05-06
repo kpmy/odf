@@ -51,7 +51,8 @@ func docParts(m model.Model) (ret Parts) {
 			halt.As(100, l.Name())
 		}
 		enc := xml.NewEncoder(buf)
-		enc.Encode(l)
+		err := enc.Encode(l)
+		assert.For(err == nil, 60, err)
 	}
 	return
 }
@@ -61,6 +62,8 @@ func Generate(m model.Model, out io.Writer, mimetype xmlns.Mime) {
 	mime := &zip.FileHeader{Name: xmlns.Mimetype, Method: zip.Store} //файл mimetype не надо сжимать, режим Store
 	if w, err := z.CreateHeader(mime); err == nil {
 		bytes.NewBufferString(string(mimetype)).WriteTo(w)
+	} else {
+		halt.As(100, err)
 	}
 	manifest := &Manifest{}
 	manifest.init(mimetype)
@@ -68,6 +71,8 @@ func Generate(m model.Model, out io.Writer, mimetype xmlns.Mime) {
 		if w, err := z.Create(k); err == nil {
 			v.WriteTo(w)
 			manifest.Entries = append(manifest.Entries, Entry{MediaType: xmlns.MimeDefault, FullPath: k})
+		} else {
+			halt.As(100, err)
 		}
 	}
 	//place for attachements

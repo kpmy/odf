@@ -1,10 +1,12 @@
 package mappers
 
 import (
+	"odf/mappers/attr"
 	"odf/model"
 	"odf/xmlns"
 	"odf/xmlns/office"
 	"odf/xmlns/text"
+	"reflect"
 	"ypk/assert"
 )
 
@@ -44,7 +46,9 @@ func (f *Formatter) Init() {
 }
 
 func (f *Formatter) writeAttr() {
-
+	if !f.attr.stored {
+		f.attr.Flush()
+	}
 }
 
 func (f *Formatter) WritePara(s string) {
@@ -68,7 +72,7 @@ func (f *Formatter) WriteString(_s string) {
 		f.rider.Write(model.Text(string(buf)))
 		buf = make([]rune, 0)
 		if space && count > 1 {
-			w := f.m.NewWriter()
+			w := f.m.NewWriter(f.rider)
 			w.WritePos(New(text.S))
 			w.Attr(text.C, count)
 		}
@@ -90,12 +94,33 @@ func (f *Formatter) WriteString(_s string) {
 		f.WritePara(_s)
 	} else {
 		f.writeAttr()
+		if a := f.attr.Fit(text.Span); a != nil {
+			f.rider.WritePos(New(text.Span))
+			f.rider.Attr(text.StyleName, a.Name())
+		}
 		s := []rune(_s)
 		br := false
 		for pos := 0; pos < len(s) && s[pos] != 0; {
 			switch s[pos] {
 			case ' ':
 				count++
+			case '\n':
+				grow()
+				f.rider.Write(New(text.LineBreak))
+			case '\r':
+				grow()
+				if f.attr.Fit(text.Span) != nil {
+					f.rider.Pos(f.rider.Pos().Parent())
+				}
+				for pos = pos + 1; pos < len(s); pos++ {
+					buf = append(buf, s[pos])
+				}
+				f.WritePara(string(buf))
+				pos--
+				br = true
+			case '\t':
+				grow()
+				f.rider.Write(New(text.Tab))
 			default:
 				if count > 1 {
 					flush(true)
@@ -109,8 +134,29 @@ func (f *Formatter) WriteString(_s string) {
 		}
 		if !br {
 			grow()
+			if f.attr.Fit(text.Span) != nil {
+				f.rider.Pos(f.rider.Pos().Parent())
+			}
 		}
 	}
+}
+
+func (f *Formatter) SetAttr(a attr.Attributes) {
+	assert.For(f.ready, 20)
+	if a != nil {
+		n := reflect.TypeOf(a).String()
+		c := f.attr.current[n]
+		if (c == nil) || !c.Equal(a) {
+			f.attr.stored = false
+			f.attr.current[n] = a
+		}
+	} else {
+		f.attr.reset()
+	}
+}
+
+func (f *Formatter) RegisterFont(name, fontface string) {
+	f.attr.RegisterFont(name, fontface)
 }
 
 func init() {

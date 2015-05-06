@@ -2,6 +2,7 @@ package stub
 
 import (
 	"encoding/xml"
+	"strconv"
 )
 
 type StringAttr struct {
@@ -14,6 +15,20 @@ func (a *StringAttr) String() string {
 
 func (a *StringAttr) MarshalXMLAttr(name xml.Name) (xa xml.Attr, err error) {
 	xa.Name = name
-	xa.Value = a.Value
+	xa.Value = a.String()
+	return
+}
+
+type IntAttr struct {
+	Value int
+}
+
+func (a *IntAttr) String() string {
+	return strconv.Itoa(a.Value)
+}
+
+func (a *IntAttr) MarshalXMLAttr(name xml.Name) (xa xml.Attr, err error) {
+	xa.Name = name
+	xa.Value = a.String()
 	return
 }

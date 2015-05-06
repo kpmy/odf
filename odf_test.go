@@ -3,11 +3,13 @@ package odf
 import (
 	"odf/generators"
 	"odf/mappers"
+	"odf/mappers/attr"
 	"odf/model"
 	_ "odf/model/stub"
 	"odf/xmlns"
 	"os"
 	"testing"
+	"ypk/assert"
 )
 
 func TestModel(t *testing.T) {
@@ -37,17 +39,32 @@ func TestGenerators(t *testing.T) {
 	fm.MimeType = xmlns.MimeText
 	fm.Init()
 	generators.Generate(m, output, fm.MimeType)
-	output.Close()
+	assert.For(output.Close() == nil, 20)
 }
 
 func TestStructure(t *testing.T) {
-	output, _ := os.OpenFile("test0.odf", os.O_CREATE|os.O_WRONLY, 0666)
+	output, _ := os.OpenFile("test1.odf", os.O_CREATE|os.O_WRONLY, 0666)
+	m := model.ModelFactory()
+	fm := &mappers.Formatter{}
+	fm.ConnectTo(m)
+	fm.MimeType = xmlns.MimeText
+	fm.Init()
+	fm.WriteString("Hello, World!   \t   \n   \r	фыва 	фыва		\n фыва")
+	generators.Generate(m, output, fm.MimeType)
+	assert.For(output.Close() == nil, 20)
+}
+
+func TestStyles(t *testing.T) {
+	output, _ := os.OpenFile("test2.odf", os.O_CREATE|os.O_WRONLY, 0666)
 	m := model.ModelFactory()
 	fm := &mappers.Formatter{}
 	fm.ConnectTo(m)
 	fm.MimeType = xmlns.MimeText
 	fm.Init()
 	fm.WriteString(`Hello, World!`)
+	fm.RegisterFont("Arial", "Arial")
+	fm.SetAttr(new(attr.TextAttributes).Size(32).FontFace("Arial"))
+	fm.WriteString(`Hello, World!`)
 	generators.Generate(m, output, fm.MimeType)
-	output.Close()
+	assert.For(output.Close() == nil, 20)
 }

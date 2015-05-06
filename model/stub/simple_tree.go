@@ -14,6 +14,7 @@ type sn struct {
 	name     model.LeafName
 	attr     map[model.AttrName]model.Attribute
 	children []model.Leaf
+	parent   model.Node
 }
 
 func (n *sn) Attr(name model.AttrName, val ...model.Attribute) model.Attribute {
@@ -51,6 +52,14 @@ func (n *sn) Name() model.LeafName {
 func (n *sn) init() {
 	n.attr = make(map[model.AttrName]model.Attribute)
 	n.children = make([]model.Leaf, 0)
+}
+
+func (n *sn) Parent(p ...model.Node) model.Node {
+	if len(p) == 1 {
+		assert.For(n.parent == nil, 20)
+		n.parent = p[0]
+	}
+	return n.parent
 }
 
 func (n *sn) MarshalXML(e *xml.Encoder, start xml.StartElement) (err error) {

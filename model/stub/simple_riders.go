@@ -66,7 +66,9 @@ func (w *sw) Base() model.Model {
 }
 
 func (w *sw) InitFrom(old model.Writer) {
-	panic(126)
+	if old != nil {
+		w.Pos(old.Pos())
+	}
 }
 
 func (w *sw) Pos(p ...model.Leaf) model.Leaf {
@@ -83,8 +85,10 @@ func (w *sw) Write(l model.Leaf) {
 		switch n := _n.(type) {
 		case *sn:
 			n.children = append(n.children, l)
+			l.Parent(n)
 		case *root:
 			n.inner.children = append(n.inner.children, l)
+			l.Parent(n.inner)
 		default:
 			halt.As(100, reflect.TypeOf(n))
 		}
@@ -96,10 +100,26 @@ func (w *sw) WritePos(l model.Leaf) model.Leaf {
 	return w.Pos(l)
 }
 
+func validateAttr(n model.AttrName, val string) {
+	values := xmlns.Enums[n]
+	found := false
+	for _, v := range values {
+		if v == val {
+			found = true
+		}
+	}
+	assert.For(found, 60)
+}
+
 func castAttr(n model.AttrName, i interface{}) (ret model.Attribute) {
 	typ := xmlns.Typed[n]
 	switch typ {
 	case xmlns.NONE, xmlns.STRING:
+		ret = &StringAttr{Value: i.(string)}
+	case xmlns.INT:
+		ret = &IntAttr{Value: i.(int)}
+	case xmlns.ENUM:
+		validateAttr(n, i.(string))
 		ret = &StringAttr{Value: i.(string)}
 	default:
 		halt.As(100, typ, reflect.TypeOf(i))

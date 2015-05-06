@@ -33,13 +33,24 @@ func (r *root) NofChild() int {
 	return r.inner.NofChild()
 }
 
+func (r *root) Parent(...model.Node) model.Node { return nil }
+
 type text struct {
-	data string
+	data   string
+	parent model.Node
 }
 
 func (t *text) Name() model.LeafName { panic(100) }
 
 func (t *text) Attr(model.AttrName, ...model.Attribute) model.Attribute { panic(100) }
+
+func (t *text) Parent(p ...model.Node) model.Node {
+	if len(p) == 1 {
+		assert.For(t.parent == nil, 20)
+		t.parent = p[0]
+	}
+	return t.parent
+}
 
 func (r *root) MarshalXML(e *xml.Encoder, start xml.StartElement) (err error) {
 	start.Name.Local = string(r.inner.Name())
