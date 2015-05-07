@@ -15,7 +15,9 @@ type ParagraphAttributes struct {
 
 func (p *ParagraphAttributes) Equal(_a Attributes) (ok bool) {
 	a, ok := _a.(*ParagraphAttributes)
-	ok = p.align == a.align && p.pageBreak == a.pageBreak
+	if ok {
+		ok = p.align == a.align && p.pageBreak == a.pageBreak
+	}
 	return
 }
 

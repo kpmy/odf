@@ -99,6 +99,15 @@ func (a *Attr) Flush() {
 	}
 }
 
+func (a *Attr) OldAttr(n attr.Attributes) attr.Attributes {
+	for _, v := range a.old {
+		if v.Equal(n) {
+			return v
+		}
+	}
+	return nil
+}
+
 func (a *Attr) SetDefaults(al ...attr.Attributes) {
 	wr := a.doc.NewWriter()
 	wr.Pos(a.ds)

@@ -78,6 +78,20 @@ func (w *sw) Pos(p ...model.Leaf) model.Leaf {
 	return w.pos
 }
 
+func thisNode(l model.Leaf) model.Node {
+	if _n, ok := l.(model.Node); ok {
+		switch n := _n.(type) {
+		case *sn:
+			return n
+		case *root:
+			return n.inner
+		default:
+			halt.As(100, reflect.TypeOf(n))
+		}
+	}
+	return nil
+}
+
 func (w *sw) Write(l model.Leaf) {
 	assert.For(l != nil, 20)
 	assert.For(w.pos != nil, 21)
@@ -105,17 +119,16 @@ func (w *sw) Delete(l model.Leaf) {
 		return
 	}
 	assert.For(l != nil, 20)
-	assert.For(l.Parent() == w.pos, 21)
-	if _n, ok := w.pos.(model.Node); ok {
-		switch n := _n.(type) {
-		case *sn:
-			n.children = del(n.children, l)
-		case *root:
-			n.inner.children = del(n.inner.children, l)
-		default:
-			halt.As(100, reflect.TypeOf(n))
-		}
+	assert.For(l.Parent() == thisNode(w.pos), 21, l.Parent(), w.pos.(model.Node))
+	switch n := thisNode(w.pos).(type) {
+	case *sn:
+		n.children = del(n.children, l)
+	case *root:
+		n.inner.children = del(n.inner.children, l)
+	default:
+		halt.As(100, reflect.TypeOf(n))
 	}
+
 }
 
 func (w *sw) WritePos(l model.Leaf) model.Leaf {

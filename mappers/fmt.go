@@ -148,10 +148,14 @@ func (f *Formatter) SetAttr(a attr.Attributes) {
 	assert.For(f.ready, 20)
 	if a != nil {
 		n := reflect.TypeOf(a).String()
-		c := f.attr.current[n]
-		if (c == nil) || !c.Equal(a) {
-			f.attr.stored = false
-			f.attr.current[n] = a
+		if old := f.attr.OldAttr(a); old != nil {
+			f.attr.current[n] = old
+		} else {
+			c := f.attr.current[n]
+			if (c == nil) || !c.Equal(a) {
+				f.attr.stored = false
+				f.attr.current[n] = a
+			}
 		}
 	} else {
 		f.attr.reset()

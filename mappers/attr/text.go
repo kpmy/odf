@@ -15,7 +15,9 @@ type TextAttributes struct {
 
 func (t *TextAttributes) Equal(_a Attributes) (ok bool) {
 	a, ok := _a.(*TextAttributes)
-	ok = t.size == a.size && t.fontFace == a.fontFace
+	if ok {
+		ok = t.size == a.size && t.fontFace == a.fontFace
+	}
 	return
 }
 
