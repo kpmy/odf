@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	Paragraph model.LeafName = "text:p"
+	P         model.LeafName = "text:p"
 	S         model.LeafName = "text:s"
 	LineBreak model.LeafName = "text:line-break"
 	Tab       model.LeafName = "text:tab"

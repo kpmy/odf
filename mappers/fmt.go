@@ -54,11 +54,14 @@ func (f *Formatter) writeAttr() {
 func (f *Formatter) WritePara(s string) {
 	assert.For(f.ready, 20)
 	assert.For(f.MimeType == xmlns.MimeText, 21)
-	if pos := f.rider.Pos(); pos.Name() != office.Text || pos.Name() == text.Paragraph {
+	if pos := f.rider.Pos(); pos.Name() != office.Text || pos.Name() == text.P {
 		f.rider.Pos(f.text)
 	}
-	f.rider.WritePos(New(text.Paragraph))
+	f.rider.WritePos(New(text.P))
 	f.writeAttr()
+	if a := f.attr.Fit(text.P); a != nil {
+		f.rider.Attr(text.StyleName, a.Name())
+	}
 	f.WriteString(s)
 }
 
@@ -90,7 +93,7 @@ func (f *Formatter) WriteString(_s string) {
 		count = 0
 	}
 
-	if f.rider.Pos().Name() != text.Paragraph {
+	if f.rider.Pos().Name() != text.P {
 		f.WritePara(_s)
 	} else {
 		f.writeAttr()
@@ -157,6 +160,10 @@ func (f *Formatter) SetAttr(a attr.Attributes) {
 
 func (f *Formatter) RegisterFont(name, fontface string) {
 	f.attr.RegisterFont(name, fontface)
+}
+
+func (f *Formatter) SetDefaults(a ...attr.Attributes) {
+	f.attr.SetDefaults(a...)
 }
 
 func init() {

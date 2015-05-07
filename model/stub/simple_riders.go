@@ -95,6 +95,29 @@ func (w *sw) Write(l model.Leaf) {
 	}
 }
 
+func (w *sw) Delete(l model.Leaf) {
+	del := func(l []model.Leaf, x model.Leaf) (ret []model.Leaf) {
+		for _, i := range l {
+			if i != x {
+				ret = append(ret, i)
+			}
+		}
+		return
+	}
+	assert.For(l != nil, 20)
+	assert.For(l.Parent() == w.pos, 21)
+	if _n, ok := w.pos.(model.Node); ok {
+		switch n := _n.(type) {
+		case *sn:
+			n.children = del(n.children, l)
+		case *root:
+			n.inner.children = del(n.inner.children, l)
+		default:
+			halt.As(100, reflect.TypeOf(n))
+		}
+	}
+}
+
 func (w *sw) WritePos(l model.Leaf) model.Leaf {
 	w.Write(l)
 	return w.Pos(l)

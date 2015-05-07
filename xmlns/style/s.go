@@ -6,9 +6,11 @@ import (
 )
 
 const (
-	Style          model.LeafName = "style:style"
-	TextProperties model.LeafName = "style:text-properties"
-	FontFace       model.LeafName = "style:font-face"
+	Style               model.LeafName = "style:style"
+	TextProperties      model.LeafName = "style:text-properties"
+	ParagraphProperties model.LeafName = "style:paragraph-properties"
+	DefaultStyle        model.LeafName = "style:default-style"
+	FontFace            model.LeafName = "style:font-face"
 )
 
 const (
@@ -18,10 +20,11 @@ const (
 )
 
 const (
-	FamilyText = "text"
+	FamilyText      = "text"
+	FamilyParagraph = "paragraph"
 )
 
 func init() {
 	xmlns.Typed[Family] = xmlns.ENUM
-	xmlns.Enums[Family] = []string{FamilyText}
+	xmlns.Enums[Family] = []string{FamilyText, FamilyParagraph}
 }

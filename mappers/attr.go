@@ -6,6 +6,7 @@ import (
 	"odf/xmlns/office"
 	"odf/xmlns/style"
 	"odf/xmlns/svg"
+	"odf/xmlns/text"
 	"strconv"
 	"ypk/halt"
 )
@@ -18,6 +19,7 @@ type Attr struct {
 	ms      model.Leaf //master styles
 	asc     model.Leaf //automatic styles
 	ffdc    model.Leaf //font-face decls
+	s       model.Leaf
 	current map[string]attr.Attributes
 	old     map[string]attr.Attributes
 	fonts   map[string]model.Leaf
@@ -89,10 +91,32 @@ func (a *Attr) Flush() {
 				wr.Attr(style.Name, v.Name())
 				v.Write(a.doc.NewWriter(wr))
 				a.old[v.Name()] = v
-			} else {
+			} else if n != "" && a.old[n] == nil {
 				halt.As(100, v.Name())
 			}
 		}
 		a.stored = true
+	}
+}
+
+func (a *Attr) SetDefaults(al ...attr.Attributes) {
+	wr := a.doc.NewWriter()
+	wr.Pos(a.ds)
+	if a.s == nil {
+		a.s = wr.WritePos(New(office.Styles))
+		for _, x := range al {
+			switch x.Fit() {
+			case text.P, text.Span:
+				wr.WritePos(New(style.DefaultStyle))
+				x.Write(a.doc.NewWriter(wr))
+				wr.Attr(style.Family, style.FamilyParagraph)
+			default:
+				halt.As(100, x.Fit())
+			}
+		}
+	} else {
+		wr.Delete(a.s)
+		a.s = nil
+		a.SetDefaults(al...)
 	}
 }

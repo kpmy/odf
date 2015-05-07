@@ -61,10 +61,16 @@ func TestStyles(t *testing.T) {
 	fm.ConnectTo(m)
 	fm.MimeType = xmlns.MimeText
 	fm.Init()
-	fm.WriteString(`Hello, World!`)
 	fm.RegisterFont("Arial", "Arial")
+	fm.RegisterFont("Courier New", "Courier New")
+	fm.SetDefaults(new(attr.TextAttributes).Size(18).FontFace("Courier New"))
+	fm.WriteString(`Hello, World!`)
 	fm.SetAttr(new(attr.TextAttributes).Size(32).FontFace("Arial"))
 	fm.WriteString(`Hello, World!`)
+	fm.SetAttr(new(attr.ParagraphAttributes).AlignRight().PageBreak())
+	fm.WritePara(`Page break!`)
+	fm.SetAttr(nil)
+	fm.WriteString(`Hello, Пщ!`)
 	generators.Generate(m, output, fm.MimeType)
 	assert.For(output.Close() == nil, 20)
 }

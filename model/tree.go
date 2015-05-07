@@ -38,6 +38,7 @@ type Writer interface {
 	Write(Leaf)
 	WritePos(Leaf) Leaf
 	Attr(AttrName, interface{})
+	Delete(Leaf)
 }
 
 var ModelFactory func() Model
