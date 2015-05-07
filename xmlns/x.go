@@ -49,8 +49,9 @@ const (
 type Mime string
 
 const (
-	MimeDefault      = "text/xml"
-	MimeText    Mime = "application/vnd.oasis.opendocument.text"
+	MimeDefault          = "text/xml"
+	MimeText        Mime = "application/vnd.oasis.opendocument.text"
+	MimeSpreadsheet Mime = "application/vnd.oasis.opendocument.spreadsheet"
 )
 
 var Typed map[model.AttrName]AttrType

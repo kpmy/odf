@@ -54,7 +54,7 @@ func TestStructure(t *testing.T) {
 	assert.For(output.Close() == nil, 20)
 }
 
-func TestStyles(t *testing.T) {
+func TestStylesMechanism(t *testing.T) {
 	output, _ := os.OpenFile("test2.odf", os.O_CREATE|os.O_WRONLY, 0666)
 	m := model.ModelFactory()
 	fm := &mappers.Formatter{}
@@ -70,7 +70,7 @@ func TestStyles(t *testing.T) {
 	fm.WriteString(`Hello, World!`)
 	fm.SetAttr(new(attr.TextAttributes).Size(36).FontFace("Courier New"))
 	fm.WriteString(`Hello, World!`)
-	fm.SetAttr(new(attr.TextAttributes).Size(32).FontFace("Arial"))
+	fm.SetAttr(new(attr.TextAttributes).Size(32).FontFace("Arial")) //test attribute cache
 	fm.WriteString(`Hello, World!`)
 	fm.SetAttr(new(attr.ParagraphAttributes).AlignRight().PageBreak())
 	fm.WritePara(`Page break!`)
@@ -78,4 +78,27 @@ func TestStyles(t *testing.T) {
 	fm.WriteString(`Hello, Пщ!`)
 	generators.Generate(m, output, fm.MimeType)
 	assert.For(output.Close() == nil, 20)
+}
+
+func TestTables(t *testing.T) {
+	{
+		output, _ := os.OpenFile("test3.odf", os.O_CREATE|os.O_WRONLY, 0666)
+		m := model.ModelFactory()
+		fm := &mappers.Formatter{}
+		fm.ConnectTo(m)
+		fm.MimeType = xmlns.MimeText
+		fm.Init()
+		generators.Generate(m, output, fm.MimeType)
+		assert.For(output.Close() == nil, 20)
+	}
+	{
+		output, _ := os.OpenFile("test4.odf", os.O_CREATE|os.O_WRONLY, 0666)
+		m := model.ModelFactory()
+		fm := &mappers.Formatter{}
+		fm.ConnectTo(m)
+		fm.MimeType = xmlns.MimeSpreadsheet
+		fm.Init()
+		generators.Generate(m, output, fm.MimeType)
+		assert.For(output.Close() == nil, 20)
+	}
 }
