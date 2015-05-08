@@ -13,6 +13,7 @@ const (
 	DocumentContent model.LeafName = "office:document-content"
 	Body            model.LeafName = "office:body"
 	Text            model.LeafName = "office:text"
+	Spreadsheet     model.LeafName = "office:spreadsheet"
 	Styles          model.LeafName = "office:styles"
 )
 

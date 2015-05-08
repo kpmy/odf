@@ -92,16 +92,48 @@ func thisNode(l model.Leaf) model.Node {
 	return nil
 }
 
-func (w *sw) Write(l model.Leaf) {
+func (w *sw) Write(l model.Leaf, after ...model.Leaf) {
 	assert.For(l != nil, 20)
 	assert.For(w.pos != nil, 21)
+	var splitter model.Leaf
+	split := false
+	if len(after) == 1 {
+		splitter = after[0]
+		split = true
+	}
+	add := func(source []model.Leaf, x model.Leaf) (ret []model.Leaf) {
+		var (
+			front []model.Leaf
+			tail  []model.Leaf
+		)
+		switch {
+		case split && splitter == nil:
+			tail = source
+		case split && splitter != nil:
+			found := false
+			for _, i := range source {
+				if !found {
+					front = append(front, i)
+					found = i == splitter
+				} else {
+					tail = append(tail, i)
+				}
+			}
+		default:
+			front = source
+		}
+		ret = append(ret, front...)
+		ret = append(ret, x)
+		ret = append(ret, tail...)
+		return
+	}
 	if _n, ok := w.pos.(model.Node); ok {
 		switch n := _n.(type) {
 		case *sn:
-			n.children = append(n.children, l)
+			n.children = add(n.children, l)
 			l.Parent(n)
 		case *root:
-			n.inner.children = append(n.inner.children, l)
+			n.inner.children = add(n.inner.children, l)
 			l.Parent(n.inner)
 		default:
 			halt.As(100, reflect.TypeOf(n))
@@ -131,8 +163,8 @@ func (w *sw) Delete(l model.Leaf) {
 
 }
 
-func (w *sw) WritePos(l model.Leaf) model.Leaf {
-	w.Write(l)
+func (w *sw) WritePos(l model.Leaf, after ...model.Leaf) model.Leaf {
+	w.Write(l, after...)
 	return w.Pos(l)
 }
 

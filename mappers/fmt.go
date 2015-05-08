@@ -8,6 +8,7 @@ import (
 	"odf/xmlns/text"
 	"reflect"
 	"ypk/assert"
+	"ypk/halt"
 )
 
 var New func(name model.LeafName) model.Leaf
@@ -17,7 +18,7 @@ type Formatter struct {
 	rider    model.Writer
 	MimeType xmlns.Mime
 	attr     *Attr
-	text     model.Node
+	root     model.Node //root of document content, not model
 	ready    bool
 }
 
@@ -40,8 +41,15 @@ func (f *Formatter) Init() {
 	wr.Write(f.attr.ffdc)
 	wr.Write(f.attr.asc)
 	wr.WritePos(New(office.Body))
-	f.text = wr.WritePos(New(office.Text)).(model.Node)
-	f.rider.Pos(f.text)
+	switch f.MimeType {
+	case xmlns.MimeText:
+		f.root = wr.WritePos(New(office.Text)).(model.Node)
+	case xmlns.MimeSpreadsheet:
+		f.root = wr.WritePos(New(office.Spreadsheet)).(model.Node)
+	default:
+		halt.As(100, f.MimeType)
+	}
+	f.rider.Pos(f.root)
 	f.ready = true
 }
 
@@ -55,7 +63,7 @@ func (f *Formatter) WritePara(s string) {
 	assert.For(f.ready, 20)
 	assert.For(f.MimeType == xmlns.MimeText, 21)
 	if pos := f.rider.Pos(); pos.Name() != office.Text || pos.Name() == text.P {
-		f.rider.Pos(f.text)
+		f.rider.Pos(f.root)
 	}
 	f.rider.WritePos(New(text.P))
 	f.writeAttr()

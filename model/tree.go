@@ -35,8 +35,8 @@ type Writer interface {
 	InitFrom(Writer)
 	Base() Model
 	Pos(...Leaf) Leaf
-	Write(Leaf)
-	WritePos(Leaf) Leaf
+	Write(Leaf, ...Leaf)
+	WritePos(Leaf, ...Leaf) Leaf
 	Attr(AttrName, interface{})
 	Delete(Leaf)
 }
