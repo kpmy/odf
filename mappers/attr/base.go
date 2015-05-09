@@ -1,8 +1,8 @@
 package attr
 
 import (
+	"github.com/kpmy/ypk/assert"
 	"odf/model"
-	"ypk/assert"
 )
 
 var New func(name model.LeafName) model.Leaf

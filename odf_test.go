@@ -1,6 +1,7 @@
 package odf
 
 import (
+	"github.com/kpmy/ypk/assert"
 	"odf/generators"
 	"odf/mappers"
 	"odf/mappers/attr"
@@ -9,7 +10,6 @@ import (
 	"odf/xmlns"
 	"os"
 	"testing"
-	"ypk/assert"
 )
 
 func TestModel(t *testing.T) {

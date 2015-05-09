@@ -6,8 +6,8 @@ package stub
 
 import (
 	"encoding/xml"
+	"github.com/kpmy/ypk/assert"
 	"odf/model"
-	"ypk/assert"
 )
 
 type sn struct {

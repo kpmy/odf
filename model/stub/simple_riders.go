@@ -1,11 +1,11 @@
 package stub
 
 import (
+	"github.com/kpmy/ypk/assert"
+	"github.com/kpmy/ypk/halt"
 	"odf/model"
 	"odf/xmlns"
 	"reflect"
-	"ypk/assert"
-	"ypk/halt"
 )
 
 type sr struct {

@@ -4,13 +4,13 @@ import (
 	"archive/zip"
 	"bytes"
 	"encoding/xml"
+	"github.com/kpmy/ypk/assert"
+	"github.com/kpmy/ypk/halt"
 	"io"
 	"odf/model"
 	"odf/xmlns"
 	"odf/xmlns/office"
 	"odf/xmlns/urn"
-	"ypk/assert"
-	"ypk/halt"
 )
 
 type Embeddable interface {

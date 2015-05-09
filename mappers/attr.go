@@ -1,6 +1,7 @@
 package mappers
 
 import (
+	"github.com/kpmy/ypk/halt"
 	"odf/mappers/attr"
 	"odf/model"
 	"odf/xmlns/office"
@@ -8,7 +9,6 @@ import (
 	"odf/xmlns/svg"
 	"odf/xmlns/text"
 	"strconv"
-	"ypk/halt"
 )
 
 type Attr struct {

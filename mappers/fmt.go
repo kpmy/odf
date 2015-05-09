@@ -1,13 +1,13 @@
 package mappers
 
 import (
+	"github.com/kpmy/ypk/assert"
 	"odf/mappers/attr"
 	"odf/model"
 	"odf/xmlns"
 	"odf/xmlns/office"
 	"odf/xmlns/text"
 	"reflect"
-	"ypk/assert"
 )
 
 var New func(name model.LeafName) model.Leaf
