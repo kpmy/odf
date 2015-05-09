@@ -62,7 +62,7 @@ func docParts(m model.Model) (ret Parts) {
 	return
 }
 
-func Generate(m model.Model, embed map[string]Embeddable, out io.Writer, mimetype xmlns.Mime) {
+func GeneratePackage(m model.Model, embed map[string]Embeddable, out io.Writer, mimetype xmlns.Mime) {
 	z := zip.NewWriter(out)
 	mime := &zip.FileHeader{Name: xmlns.Mimetype, Method: zip.Store} //файл mimetype не надо сжимать, режим Store
 	if w, err := z.CreateHeader(mime); err == nil {
