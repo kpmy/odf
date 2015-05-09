@@ -32,3 +32,17 @@ func (a *IntAttr) MarshalXMLAttr(name xml.Name) (xa xml.Attr, err error) {
 	xa.Value = a.String()
 	return
 }
+
+type MeasureAttr struct {
+	Value float64
+}
+
+func (a *MeasureAttr) String() string {
+	return strconv.FormatFloat(a.Value, 'f', 8, 64) + "cm"
+}
+
+func (a *MeasureAttr) MarshalXMLAttr(name xml.Name) (xa xml.Attr, err error) {
+	xa.Name = name
+	xa.Value = a.String()
+	return
+}

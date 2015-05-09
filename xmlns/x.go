@@ -43,6 +43,7 @@ const (
 	NONE AttrType = iota
 	STRING
 	INT
+	MEASURE
 	ENUM
 )
 

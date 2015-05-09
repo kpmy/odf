@@ -37,7 +37,7 @@ type Writer interface {
 	Pos(...Leaf) Leaf
 	Write(Leaf)
 	WritePos(Leaf) Leaf
-	Attr(AttrName, interface{})
+	Attr(AttrName, interface{}) Writer //for fluid interface
 	Delete(Leaf)
 }
 

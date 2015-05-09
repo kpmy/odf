@@ -51,9 +51,7 @@ func (f *Formatter) writeAttr() {
 	}
 }
 
-func (f *Formatter) WritePara(s string) {
-	assert.For(f.ready, 20)
-	assert.For(f.MimeType == xmlns.MimeText, 21)
+func (f *Formatter) makePara() {
 	if pos := f.rider.Pos(); pos.Name() != office.Text || pos.Name() == text.P {
 		f.rider.Pos(f.text)
 	}
@@ -62,6 +60,12 @@ func (f *Formatter) WritePara(s string) {
 	if a := f.attr.Fit(text.P); a != nil {
 		f.rider.Attr(text.StyleName, a.Name())
 	}
+}
+
+func (f *Formatter) WritePara(s string) {
+	assert.For(f.ready, 20)
+	assert.For(f.MimeType == xmlns.MimeText, 21)
+	f.makePara()
 	f.WriteString(s)
 }
 

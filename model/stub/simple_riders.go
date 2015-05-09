@@ -157,12 +157,15 @@ func castAttr(n model.AttrName, i interface{}) (ret model.Attribute) {
 	case xmlns.ENUM:
 		validateAttr(n, i.(string))
 		ret = &StringAttr{Value: i.(string)}
+	case xmlns.MEASURE:
+		ret = &MeasureAttr{Value: i.(float64)}
 	default:
 		halt.As(100, typ, reflect.TypeOf(i))
 	}
 	return ret
 }
 
-func (w *sw) Attr(n model.AttrName, val interface{}) {
+func (w *sw) Attr(n model.AttrName, val interface{}) model.Writer {
 	w.pos.Attr(n, castAttr(n, val))
+	return w
 }

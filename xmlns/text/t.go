@@ -14,10 +14,17 @@ const (
 )
 
 const (
-	C         model.AttrName = "text:c"
-	StyleName model.AttrName = "text:style-name"
+	C          model.AttrName = "text:c"
+	StyleName  model.AttrName = "text:style-name"
+	AnchorType model.AttrName = "text:anchor-type"
+)
+
+const (
+	Paragraph = "parahraph"
 )
 
 func init() {
 	xmlns.Typed[C] = xmlns.INT
+	xmlns.Typed[AnchorType] = xmlns.ENUM
+	xmlns.Enums[AnchorType] = []string{Paragraph}
 }

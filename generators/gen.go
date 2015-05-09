@@ -13,6 +13,11 @@ import (
 	"ypk/halt"
 )
 
+type Embeddable interface {
+	MimeType() xmlns.Mime
+	Reader() io.Reader
+}
+
 type Parts map[string]*bytes.Buffer
 
 type Entry struct {
@@ -57,7 +62,7 @@ func docParts(m model.Model) (ret Parts) {
 	return
 }
 
-func Generate(m model.Model, out io.Writer, mimetype xmlns.Mime) {
+func Generate(m model.Model, embed map[string]Embeddable, out io.Writer, mimetype xmlns.Mime) {
 	z := zip.NewWriter(out)
 	mime := &zip.FileHeader{Name: xmlns.Mimetype, Method: zip.Store} //файл mimetype не надо сжимать, режим Store
 	if w, err := z.CreateHeader(mime); err == nil {
@@ -75,7 +80,15 @@ func Generate(m model.Model, out io.Writer, mimetype xmlns.Mime) {
 			halt.As(100, err)
 		}
 	}
-	//place for attachements
+	for k, v := range embed {
+		if w, err := z.Create(k); err == nil {
+			_, err = io.Copy(w, v.Reader())
+			assert.For(err == nil, 60)
+			manifest.Entries = append(manifest.Entries, Entry{MediaType: string(v.MimeType()), FullPath: k})
+		} else {
+			halt.As(100, err)
+		}
+	}
 	if w, err := z.Create(xmlns.Manifest); err == nil {
 		w.Write([]byte(xml.Header))
 		enc := xml.NewEncoder(w)
