@@ -45,6 +45,7 @@ const (
 	INT
 	MEASURE
 	ENUM
+	COLOR
 )
 
 type Mime string

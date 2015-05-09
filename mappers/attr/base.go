@@ -25,3 +25,54 @@ func (n *named) Name(s ...string) string {
 	}
 	return n.name
 }
+
+type value struct {
+	name    model.AttrName
+	wr      model.Writer
+	data    interface{}
+	builder func(value)
+}
+
+type easy struct {
+	m map[model.AttrName]value
+}
+
+func (e *easy) put(n model.AttrName, x interface{}, foo func(value)) {
+	if e.m == nil {
+		e.m = make(map[model.AttrName]value)
+	}
+	b := func(v value) {
+		v.wr.Attr(v.name, v.data)
+	}
+	if foo != nil {
+		b = foo
+	}
+	if x != nil {
+		e.m[n] = value{data: x, builder: b}
+	} else {
+		delete(e.m, n)
+	}
+}
+
+func (e *easy) equal(t *easy) (ok bool) {
+	ok = (e.m != nil) == (t.m != nil)
+	if ok && (e.m != nil) {
+		for k, v := range e.m {
+			ok = t.m[k].data == v.data
+			if !ok {
+				break
+			}
+		}
+	}
+	return
+}
+
+func (e *easy) apply(wr model.Writer) {
+	if e.m != nil {
+		for k, v := range e.m {
+			v.wr = wr
+			v.name = k
+			v.builder(v)
+		}
+	}
+}

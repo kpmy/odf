@@ -2,6 +2,7 @@ package odf
 
 import (
 	"github.com/kpmy/ypk/assert"
+	"image/color"
 	"odf/generators"
 	"odf/mappers"
 	"odf/mappers/attr"
@@ -65,15 +66,16 @@ func TestStylesMechanism(t *testing.T) {
 	fm.RegisterFont("Courier New", "Courier New")
 	fm.SetDefaults(new(attr.TextAttributes).Size(18).FontFace("Courier New"))
 	fm.SetDefaults(new(attr.TextAttributes).Size(16).FontFace("Courier New"))
-	fm.WriteString(`Hello, World!`)
+	fm.WriteString("Hello, World!\n")
 	fm.SetAttr(new(attr.TextAttributes).Size(32).FontFace("Arial"))
-	fm.WriteString(`Hello, World!`)
-	fm.SetAttr(new(attr.TextAttributes).Size(36).FontFace("Courier New"))
-	fm.WriteString(`Hello, World!`)
+	fm.WriteString(`Hello, Go!`)
+	fm.SetAttr(new(attr.TextAttributes).Size(36).FontFace("Courier New").Bold().Italic())
+	fm.WriteString(`	Hello, Again!`)
 	fm.SetAttr(new(attr.TextAttributes).Size(32).FontFace("Arial")) //test attribute cache
-	fm.WriteString(`Hello, World!`)
+	fm.SetAttr(new(attr.TextAttributes).Size(32).FontFace("Arial").Color(color.RGBA{0x00, 0xff, 0xff, 0xff}))
+	fm.WriteString("\nNo, not you again!")
 	fm.SetAttr(new(attr.ParagraphAttributes).AlignRight().PageBreak())
-	fm.WritePara(`Page break!`)
+	fm.WritePara("Page break!\r")
 	fm.SetAttr(nil)
 	fm.WriteString(`Hello, Пщ!`)
 	generators.Generate(m, nil, output, fm.MimeType)
