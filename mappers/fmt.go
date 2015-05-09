@@ -45,21 +45,15 @@ func (f *Formatter) Init() {
 	f.ready = true
 }
 
-func (f *Formatter) writeAttr() {
-	if !f.attr.stored {
-		f.attr.Flush()
-	}
-}
-
 func (f *Formatter) makePara() {
 	if pos := f.rider.Pos(); pos.Name() != office.Text || pos.Name() == text.P {
 		f.rider.Pos(f.text)
 	}
 	f.rider.WritePos(New(text.P))
-	f.writeAttr()
-	if a := f.attr.Fit(text.P); a != nil {
+	f.attr.Flush()
+	f.attr.Fit(text.P, func(a attr.Attributes) {
 		f.rider.Attr(text.StyleName, a.Name())
-	}
+	})
 }
 
 func (f *Formatter) WritePara(s string) {
@@ -100,11 +94,11 @@ func (f *Formatter) WriteString(_s string) {
 	if f.rider.Pos().Name() != text.P {
 		f.WritePara(_s)
 	} else {
-		f.writeAttr()
-		if a := f.attr.Fit(text.Span); a != nil {
+		f.attr.Flush()
+		f.attr.Fit(text.Span, func(a attr.Attributes) {
 			f.rider.WritePos(New(text.Span))
 			f.rider.Attr(text.StyleName, a.Name())
-		}
+		})
 		s := []rune(_s)
 		br := false
 		for pos := 0; pos < len(s) && s[pos] != 0; {
@@ -116,9 +110,9 @@ func (f *Formatter) WriteString(_s string) {
 				f.rider.Write(New(text.LineBreak))
 			case '\r':
 				grow()
-				if f.attr.Fit(text.Span) != nil {
+				f.attr.Fit(text.Span, func(a attr.Attributes) {
 					f.rider.Pos(f.rider.Pos().Parent())
-				}
+				})
 				for pos = pos + 1; pos < len(s); pos++ {
 					buf = append(buf, s[pos])
 				}
@@ -141,9 +135,9 @@ func (f *Formatter) WriteString(_s string) {
 		}
 		if !br {
 			grow()
-			if f.attr.Fit(text.Span) != nil {
+			f.attr.Fit(text.Span, func(attr.Attributes) {
 				f.rider.Pos(f.rider.Pos().Parent())
-			}
+			})
 		}
 	}
 }
