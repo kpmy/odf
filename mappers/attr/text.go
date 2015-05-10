@@ -30,8 +30,12 @@ func (t *TextAttributes) Fit() model.LeafName { return text.Span }
 func (t *TextAttributes) Write(wr model.Writer) {
 	wr.Attr(style.Family, style.FamilyText)
 	wr.WritePos(New(style.TextProperties))
-	wr.Attr(style.FontName, t.fontFace)
-	wr.Attr(fo.FontSize, t.size)
+	if t.fontFace != "" {
+		wr.Attr(style.FontName, t.fontFace)
+	}
+	if t.size != 0 {
+		wr.Attr(fo.FontSize, t.size)
+	}
 	wr.Attr(fo.Color, t.col)
 	if t.bold {
 		wr.Attr(fo.FontWeight, fo.Bold)

@@ -63,6 +63,10 @@ func (f *Formatter) WritePara(s string) {
 	f.WriteString(s)
 }
 
+func (f *Formatter) WriteLn() {
+	f.WriteString("\n")
+}
+
 func (f *Formatter) WriteString(_s string) {
 	assert.For(f.ready, 20)
 
@@ -142,7 +146,7 @@ func (f *Formatter) WriteString(_s string) {
 	}
 }
 
-func (f *Formatter) SetAttr(a attr.Attributes) {
+func (f *Formatter) SetAttr(a attr.Attributes) *Formatter {
 	assert.For(f.ready, 20)
 	if a != nil {
 		n := reflect.TypeOf(a).String()
@@ -158,6 +162,7 @@ func (f *Formatter) SetAttr(a attr.Attributes) {
 	} else {
 		f.attr.reset()
 	}
+	return f
 }
 
 func (f *Formatter) RegisterFont(name, fontface string) {

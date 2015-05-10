@@ -33,6 +33,11 @@ func (p *ParagraphAttributes) AlignRight() *ParagraphAttributes {
 	return p
 }
 
+func (p *ParagraphAttributes) AlignCenter() *ParagraphAttributes {
+	p.put(fo.TextAlign, fo.Center, nil)
+	return p
+}
+
 func (p *ParagraphAttributes) PageBreak() *ParagraphAttributes {
 	p.put(fo.BreakBefore, true, func(v value) {
 		if x := v.data.(bool); x {
