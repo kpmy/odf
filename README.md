@@ -1,5 +1,5 @@
 # ODF
-[Open Document Format](http://docs.oasis-open.org/office/v1.2/OpenDocument-v1.2.html) (ODF) generator library for Go.
+[Open Document Format](http://docs.oasis-open.org/office/v1.2/OpenDocument-v1.2.html) (ODF) producer library for Go.
 
 ## Описание
 Формирование документа в формате Open Document (ODF) для языка Go.
