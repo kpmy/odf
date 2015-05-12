@@ -5,7 +5,6 @@ import (
 	"odf/model"
 	"odf/xmlns"
 	"odf/xmlns/office"
-	"odf/xmlns/text"
 	"reflect"
 	"ypk/assert"
 	"ypk/halt"
@@ -14,18 +13,17 @@ import (
 var New func(name model.LeafName) model.Leaf
 
 type Formatter struct {
-	m        model.Model
-	rider    model.Writer
-	MimeType xmlns.Mime
-	attr     *Attr
-	root     model.Node //root of document content, not model
-	ready    bool
+	m                 model.Model
+	MimeType          xmlns.Mime
+	attr              *Attr
+	root              model.Node //root of document content, not model
+	ready             bool
+	defaultParaMapper *ParaMapper
 }
 
 func (f *Formatter) ConnectTo(m model.Model) {
 	assert.For(m.Root().NofChild() == 0, 20, "only new documents for now")
 	f.m = m
-	f.rider = f.m.NewWriter()
 	f.attr = &Attr{}
 	f.ready = false
 }
@@ -49,7 +47,8 @@ func (f *Formatter) Init() {
 	default:
 		halt.As(100, f.MimeType)
 	}
-	f.rider.Pos(f.root)
+	f.defaultParaMapper = new(ParaMapper)
+	f.defaultParaMapper.ConnectTo(f)
 	f.ready = true
 }
 
@@ -61,95 +60,12 @@ func (f *Formatter) writeAttr() {
 
 func (f *Formatter) WritePara(s string) {
 	assert.For(f.ready, 20)
-	assert.For(f.MimeType == xmlns.MimeText, 21)
-	if pos := f.rider.Pos(); pos.Name() != office.Text || pos.Name() == text.P {
-		f.rider.Pos(f.root)
-	}
-	f.rider.WritePos(New(text.P))
-	f.writeAttr()
-	if a := f.attr.Fit(text.P); a != nil {
-		f.rider.Attr(text.StyleName, a.Name())
-	}
-	f.WriteString(s)
+	f.defaultParaMapper.WritePara(s)
 }
 
-func (f *Formatter) WriteString(_s string) {
+func (f *Formatter) WriteString(s string) {
 	assert.For(f.ready, 20)
-
-	buf := make([]rune, 0)
-	count := 0
-
-	flush := func(space bool) {
-		f.rider.Write(model.Text(string(buf)))
-		buf = make([]rune, 0)
-		if space && count > 1 {
-			w := f.m.NewWriter(f.rider)
-			w.WritePos(New(text.S))
-			w.Attr(text.C, count)
-		}
-	}
-
-	grow := func() {
-		if count > 1 {
-			flush(true)
-		} else if count == 1 {
-			buf = append(buf, ' ')
-		}
-		if len(buf) > 0 {
-			flush(false)
-		}
-		count = 0
-	}
-
-	if f.rider.Pos().Name() != text.P {
-		f.WritePara(_s)
-	} else {
-		f.writeAttr()
-		if a := f.attr.Fit(text.Span); a != nil {
-			f.rider.WritePos(New(text.Span))
-			f.rider.Attr(text.StyleName, a.Name())
-		}
-		s := []rune(_s)
-		br := false
-		for pos := 0; pos < len(s) && s[pos] != 0; {
-			switch s[pos] {
-			case ' ':
-				count++
-			case '\n':
-				grow()
-				f.rider.Write(New(text.LineBreak))
-			case '\r':
-				grow()
-				if f.attr.Fit(text.Span) != nil {
-					f.rider.Pos(f.rider.Pos().Parent())
-				}
-				for pos = pos + 1; pos < len(s); pos++ {
-					buf = append(buf, s[pos])
-				}
-				f.WritePara(string(buf))
-				pos--
-				br = true
-			case '\t':
-				grow()
-				f.rider.Write(New(text.Tab))
-			default:
-				if count > 1 {
-					flush(true)
-				} else if count == 1 {
-					buf = append(buf, ' ')
-				}
-				count = 0
-				buf = append(buf, s[pos])
-			}
-			pos++
-		}
-		if !br {
-			grow()
-			if f.attr.Fit(text.Span) != nil {
-				f.rider.Pos(f.rider.Pos().Parent())
-			}
-		}
-	}
+	f.defaultParaMapper.WriteString(s)
 }
 
 func (f *Formatter) SetAttr(a attr.Attributes) {

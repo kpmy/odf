@@ -2,6 +2,7 @@ package table
 
 import (
 	"odf/model"
+	"odf/xmlns"
 )
 
 const (
@@ -12,5 +13,12 @@ const (
 )
 
 const (
-	Name model.AttrName = "table:name"
+	Name                 model.AttrName = "table:name"
+	NumberColumnsSpanned                = "table:number-columns-spanned"
+	NumberRowsSpanned                   = "table:number-rows-spanned"
 )
+
+func init() {
+	xmlns.Typed[NumberColumnsSpanned] = xmlns.INT
+	xmlns.Typed[NumberRowsSpanned] = xmlns.INT
+}

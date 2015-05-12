@@ -23,10 +23,6 @@ func (t *TableMapper) Ready() bool {
 	return t.fm != nil && t.fm.ready
 }
 
-func (t *TableMapper) rider() model.Writer {
-	return t.fm.rider
-}
-
 func (t *TableMapper) newWriter(old ...model.Writer) model.Writer {
 	return t.fm.m.NewWriter(old...)
 }
@@ -42,7 +38,8 @@ func (t *TableMapper) Write(name string, rows, cols int) {
 	t.fm.writeAttr()
 	this := &Table{Rows: rows, Columns: cols}
 	t.List[name] = this
-	wr := t.newWriter(t.rider())
+	wr := t.newWriter()
+	wr.Pos(t.fm.root)
 	this.Root = wr.WritePos(New(table.Table))
 	wr.Attr(table.Name, name)
 	for i := 0; i < this.Columns; i++ {
@@ -111,4 +108,21 @@ func (t *TableMapper) WriteCells(this *Table, _row int, cells int) {
 		this.cellCache[i] = append(this.cellCache[i], cell)
 		wr.Write(cell)
 	}
+}
+
+func (t *TableMapper) Span(this *Table, row, col int, rowspan, colspan int) {
+	assert.For(t.Ready(), 20)
+	assert.For(rowspan > 0, 21)
+	assert.For(colspan > 0, 22)
+	wr := t.newWriter()
+	wr.Pos(this.cellCache[row][col])
+	wr.Attr(table.NumberRowsSpanned, rowspan)
+	wr.Attr(table.NumberColumnsSpanned, colspan)
+}
+
+func (t *TableMapper) Pos(this *Table, row, col int) *ParaMapper {
+	ret := new(ParaMapper)
+	ret.ConnectTo(t.fm)
+	ret.rider.Pos(this.cellCache[row][col])
+	return ret
 }

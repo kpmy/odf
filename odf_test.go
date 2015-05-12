@@ -88,6 +88,8 @@ func TestTables(t *testing.T) {
 		tt := tm.List["test"]
 		tm.WriteColumns(tt, 4)
 		tm.WriteRows(tt, 3)
+		tm.Span(tt, 0, 0, 1, 3)
+		tm.Pos(tt, 0, 0).WritePara("Hello, table world!")
 	}
 	{
 		output, _ := os.OpenFile("test3.odf", os.O_CREATE|os.O_WRONLY, 0666)
