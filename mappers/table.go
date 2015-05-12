@@ -115,7 +115,7 @@ func (t *TableMapper) Span(this *Table, row, col int, rowspan, colspan int) {
 	assert.For(rowspan > 0, 21)
 	assert.For(colspan > 0, 22)
 	wr := t.newWriter()
-	wr.Pos(this.cellCache[row][col])
+	wr.Pos(this.cellCache[col][row])
 	wr.Attr(table.NumberRowsSpanned, rowspan)
 	wr.Attr(table.NumberColumnsSpanned, colspan)
 }
@@ -123,6 +123,6 @@ func (t *TableMapper) Span(this *Table, row, col int, rowspan, colspan int) {
 func (t *TableMapper) Pos(this *Table, row, col int) *ParaMapper {
 	ret := new(ParaMapper)
 	ret.ConnectTo(t.fm)
-	ret.rider.Pos(this.cellCache[row][col])
+	ret.rider.Pos(this.cellCache[col][row])
 	return ret
 }
