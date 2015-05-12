@@ -47,8 +47,9 @@ func (d *Draw) MimeType() xmlns.Mime {
 
 //запись изображения
 func (d *Draw) WriteTo(fm *Formatter, name string, w, h interface{}) string {
-	fm.makePara()
-	wr := fm.m.NewWriter(fm.rider)
+	fm.defaultParaMapper.makePara()
+	wr := fm.m.NewWriter()
+	wr.Pos(fm.defaultParaMapper.rider.Pos())
 	wr.WritePos(New(draw.Frame))
 	wr.Attr(draw.Name, name).Attr(text.AnchorType, text.Paragraph).Attr(svg.Width, w).Attr(svg.Height, h)
 	wr.WritePos(New(draw.Image))

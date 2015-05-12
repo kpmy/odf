@@ -1,14 +1,26 @@
 package mappers
 
 import (
+	"github.com/kpmy/ypk/assert"
+	"odf/mappers/attr"
 	"odf/model"
 	"odf/xmlns/text"
-	"ypk/assert"
 )
 
 type ParaMapper struct {
 	fm    *Formatter
 	rider model.Writer
+}
+
+func (p *ParaMapper) makePara() {
+	if pos := p.rider.Pos(); pos.Name() == text.P {
+		p.rider.Pos(p.fm.root)
+	}
+	p.rider.WritePos(New(text.P))
+	p.fm.attr.Flush()
+	p.fm.attr.Fit(text.P, func(a attr.Attributes) {
+		p.rider.Attr(text.StyleName, a.Name())
+	})
 }
 
 func (p *ParaMapper) ConnectTo(fm *Formatter) {
@@ -22,10 +34,10 @@ func (p *ParaMapper) WritePara(s string) {
 		p.rider.Pos(pos.Parent())
 	}
 	p.rider.WritePos(New(text.P))
-	p.fm.writeAttr()
-	if a := p.fm.attr.Fit(text.P); a != nil {
+	p.fm.attr.Flush()
+	p.fm.attr.Fit(text.P, func(a attr.Attributes) {
 		p.rider.Attr(text.StyleName, a.Name())
-	}
+	})
 	p.WriteString(s)
 
 }
@@ -60,11 +72,11 @@ func (p *ParaMapper) WriteString(_s string) {
 	if p.rider.Pos().Name() != text.P {
 		p.WritePara(_s)
 	} else {
-		p.fm.writeAttr()
-		if a := p.fm.attr.Fit(text.Span); a != nil {
+		p.fm.attr.Flush()
+		p.fm.attr.Fit(text.Span, func(a attr.Attributes) {
 			p.rider.WritePos(New(text.Span))
 			p.rider.Attr(text.StyleName, a.Name())
-		}
+		})
 		s := []rune(_s)
 		br := false
 		for pos := 0; pos < len(s) && s[pos] != 0; {
@@ -76,9 +88,9 @@ func (p *ParaMapper) WriteString(_s string) {
 				p.rider.Write(New(text.LineBreak))
 			case '\r':
 				grow()
-				if p.fm.attr.Fit(text.Span) != nil {
+				p.fm.attr.Fit(text.Span, func(a attr.Attributes) {
 					p.rider.Pos(p.rider.Pos().Parent())
-				}
+				})
 				for pos = pos + 1; pos < len(s); pos++ {
 					buf = append(buf, s[pos])
 				}
@@ -101,9 +113,9 @@ func (p *ParaMapper) WriteString(_s string) {
 		}
 		if !br {
 			grow()
-			if p.fm.attr.Fit(text.Span) != nil {
+			p.fm.attr.Fit(text.Span, func(a attr.Attributes) {
 				p.rider.Pos(p.rider.Pos().Parent())
-			}
+			})
 		}
 	}
 }

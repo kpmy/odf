@@ -102,7 +102,7 @@ func TestTables(t *testing.T) {
 		fm.MimeType = xmlns.MimeText
 		fm.Init()
 		table(fm)
-		generators.Generate(m, output, fm.MimeType)
+		generators.GeneratePackage(m, nil, output, fm.MimeType)
 		assert.For(output.Close() == nil, 20)
 	}
 	{
@@ -113,7 +113,7 @@ func TestTables(t *testing.T) {
 		fm.MimeType = xmlns.MimeSpreadsheet
 		fm.Init()
 		table(fm)
-		generators.Generate(m, output, fm.MimeType)
+		generators.GeneratePackage(m, nil, output, fm.MimeType)
 		assert.For(output.Close() == nil, 20)
 	}
 }

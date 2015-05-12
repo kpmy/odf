@@ -2,12 +2,12 @@ package mappers
 
 import (
 	"github.com/kpmy/ypk/assert"
+	"github.com/kpmy/ypk/halt"
 	"odf/mappers/attr"
 	"odf/model"
 	"odf/xmlns"
 	"odf/xmlns/office"
 	"reflect"
-	"ypk/halt"
 )
 
 var New func(name model.LeafName) model.Leaf
@@ -52,17 +52,6 @@ func (f *Formatter) Init() {
 	f.ready = true
 }
 
-func (f *Formatter) makePara() {
-	if pos := f.rider.Pos(); pos.Name() != office.Text || pos.Name() == text.P {
-		f.rider.Pos(f.text)
-	}
-	f.rider.WritePos(New(text.P))
-		f.attr.Flush()
-	f.attr.Fit(text.P, func(a attr.Attributes) {
-		f.rider.Attr(text.StyleName, a.Name())
-	})
-}
-
 func (f *Formatter) WritePara(s string) {
 	assert.For(f.ready, 20)
 	f.defaultParaMapper.WritePara(s)
@@ -72,7 +61,7 @@ func (f *Formatter) WriteLn() {
 	f.WriteString("\n")
 }
 
-func (f *Formatter) WriteString(_s string) {
+func (f *Formatter) WriteString(s string) {
 	assert.For(f.ready, 20)
 	f.defaultParaMapper.WriteString(s)
 }

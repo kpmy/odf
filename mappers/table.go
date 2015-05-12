@@ -1,9 +1,9 @@
 package mappers
 
 import (
+	"github.com/kpmy/ypk/assert"
 	"odf/model"
 	"odf/xmlns/table"
-	"ypk/assert"
 )
 
 type Table struct {
@@ -35,7 +35,7 @@ func (t *TableMapper) ConnectTo(fm *Formatter) {
 func (t *TableMapper) Write(name string, rows, cols int) {
 	assert.For(t.Ready(), 20)
 	assert.For(name != "" && t.List[name] == nil, 21)
-	t.fm.writeAttr()
+	t.fm.attr.Flush()
 	this := &Table{Rows: rows, Columns: cols}
 	t.List[name] = this
 	wr := t.newWriter()
@@ -62,7 +62,7 @@ func (t *TableMapper) Write(name string, rows, cols int) {
 
 func (t *TableMapper) WriteRows(this *Table, rows int) {
 	assert.For(t.Ready(), 20)
-	t.fm.writeAttr()
+	t.fm.attr.Flush()
 	wr := t.newWriter()
 	for i := 0; i < rows; i++ {
 		wr.Pos(this.Root)
@@ -79,7 +79,7 @@ func (t *TableMapper) WriteRows(this *Table, rows int) {
 
 func (t *TableMapper) WriteColumns(this *Table, cols int) {
 	assert.For(t.Ready(), 20)
-	t.fm.writeAttr()
+	t.fm.attr.Flush()
 	wr := t.newWriter()
 	var last model.Leaf
 	if this.Columns > 0 {
@@ -99,7 +99,7 @@ func (t *TableMapper) WriteColumns(this *Table, cols int) {
 
 func (t *TableMapper) WriteCells(this *Table, _row int, cells int) {
 	assert.For(t.Ready(), 20)
-	t.fm.writeAttr()
+	t.fm.attr.Flush()
 	wr := t.newWriter()
 	row := this.rowCache[_row]
 	wr.Pos(row)

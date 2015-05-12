@@ -48,7 +48,29 @@ func report(suffix string, fm *mappers.Formatter) {
 	for i := 0; i < 5; i++ {
 		para()
 	}
-
+	{ //huge table
+		fm.SetAttr(new(attr.TextAttributes).Bold().Size(18))
+		fm.WritePara("TABLE 50x5")
+		fm.SetAttr(nil)
+		tm := &mappers.TableMapper{}
+		tm.ConnectTo(fm)
+		tm.Write("test", 50+1, 5) //50+header row
+		tt := tm.List["test"]
+		tm.Span(tt, 0, 0, 1, 5)
+		fm.SetAttr(new(attr.ParagraphAttributes).AlignCenter()).SetAttr(new(attr.TextAttributes).Bold())
+		tm.Pos(tt, 0, 0).WriteString("Header")
+		fm.SetAttr(nil)
+		for i := 1; i < 51; i++ {
+			for j := 0; j < 5; j++ {
+				if j == 0 {
+					fm.SetAttr(new(attr.TextAttributes).Bold())
+				} else {
+					fm.SetAttr(nil)
+				}
+				tm.Pos(tt, i, j).WriteString(strconv.Itoa(i * j))
+			}
+		}
+	}
 	{ //appendix
 		fm.RegisterFont("Courier New", "Courier New") // may not work in Linux/MacOS
 		fm.SetAttr(nil).SetAttr(new(attr.ParagraphAttributes).PageBreak())
