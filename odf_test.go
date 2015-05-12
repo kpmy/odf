@@ -33,7 +33,7 @@ func TestMappers(t *testing.T) {
 }
 
 func TestGenerators(t *testing.T) {
-	output, _ := os.OpenFile("test0.odf", os.O_CREATE|os.O_WRONLY, 0666)
+	output, _ := os.OpenFile("test-basics.odf", os.O_CREATE|os.O_WRONLY, 0666)
 	m := model.ModelFactory()
 	fm := &mappers.Formatter{}
 	fm.ConnectTo(m)
@@ -44,7 +44,7 @@ func TestGenerators(t *testing.T) {
 }
 
 func TestStructure(t *testing.T) {
-	output, _ := os.OpenFile("test1.odf", os.O_CREATE|os.O_WRONLY, 0666)
+	output, _ := os.OpenFile("test-text.odf", os.O_CREATE|os.O_WRONLY, 0666)
 	m := model.ModelFactory()
 	fm := &mappers.Formatter{}
 	fm.ConnectTo(m)
@@ -56,7 +56,7 @@ func TestStructure(t *testing.T) {
 }
 
 func TestStylesMechanism(t *testing.T) {
-	output, _ := os.OpenFile("test2.odf", os.O_CREATE|os.O_WRONLY, 0666)
+	output, _ := os.OpenFile("test-styles.odf", os.O_CREATE|os.O_WRONLY, 0666)
 	m := model.ModelFactory()
 	fm := &mappers.Formatter{}
 	fm.ConnectTo(m)
@@ -95,7 +95,7 @@ func TestTables(t *testing.T) {
 		tm.Pos(tt, 1, 2).WritePara("Hello, table world!")
 	}
 	{
-		output, _ := os.OpenFile("test3.odf", os.O_CREATE|os.O_WRONLY, 0666)
+		output, _ := os.OpenFile("test-odt-tables.odf", os.O_CREATE|os.O_WRONLY, 0666)
 		m := model.ModelFactory()
 		fm := &mappers.Formatter{}
 		fm.ConnectTo(m)
@@ -106,7 +106,7 @@ func TestTables(t *testing.T) {
 		assert.For(output.Close() == nil, 20)
 	}
 	{
-		output, _ := os.OpenFile("test4.odf", os.O_CREATE|os.O_WRONLY, 0666)
+		output, _ := os.OpenFile("test-ods-tables.odf", os.O_CREATE|os.O_WRONLY, 0666)
 		m := model.ModelFactory()
 		fm := &mappers.Formatter{}
 		fm.ConnectTo(m)
@@ -120,7 +120,7 @@ func TestTables(t *testing.T) {
 
 func TestDraw(t *testing.T) {
 	const ImagePng xmlns.Mime = "image/png"
-	output, _ := os.OpenFile("test5.odf", os.O_CREATE|os.O_WRONLY, 0666)
+	output, _ := os.OpenFile("test-draw.odf", os.O_CREATE|os.O_WRONLY, 0666)
 	m := model.ModelFactory()
 	fm := &mappers.Formatter{}
 	fm.ConnectTo(m)
@@ -128,7 +128,7 @@ func TestDraw(t *testing.T) {
 	fm.Init()
 	embed := make(map[string]generators.Embeddable)
 	{
-		img, _ := os.Open("project.png")
+		img, _ := os.Open("2go.png")
 		d := mappers.NewDraw(img, ImagePng)
 		url := d.WriteTo(fm, "Two Gophers", 6.07, 3.53) //magic? real size of `project.png`
 		embed[url] = d

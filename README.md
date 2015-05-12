@@ -1,8 +1,8 @@
 # ODF
-[Open Document Format](http://docs.oasis-open.org/office/v1.2/OpenDocument-v1.2.html) (ODF) producer library for Go.
+[Open Document Format](http://docs.oasis-open.org/office/v1.2/OpenDocument-v1.2.html) (ODF) producer library for Go (golang).
 
 ## Описание
-Формирование документа в формате Open Document (ODF) для языка Go.
+Формирование документа в формате Open Document (ODF) для языка Go (golang).
 
 Формирование документа заключается в последовательном вызове инструкций Форматтера, который выполняет модификацию одной или нескольких частей модели документа.
 Затем вызывается процедура генерации файла-архива .odf

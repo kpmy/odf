@@ -121,7 +121,7 @@ func do(wg *sync.WaitGroup) {
 func main() {
 	runtime.GOMAXPROCS(4)
 	wg := &sync.WaitGroup{}
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 1; i++ { // concurrency support
 		go do(wg)
 		wg.Add(1)
 	}
