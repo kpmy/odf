@@ -43,7 +43,9 @@ const (
 	NONE AttrType = iota
 	STRING
 	INT
+	MEASURE
 	ENUM
+	COLOR
 )
 
 type Mime string

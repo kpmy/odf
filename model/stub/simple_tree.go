@@ -6,8 +6,8 @@ package stub
 
 import (
 	"encoding/xml"
+	"github.com/kpmy/ypk/assert"
 	"odf/model"
-	"ypk/assert"
 )
 
 type sn struct {
@@ -21,7 +21,11 @@ func (n *sn) Attr(name model.AttrName, val ...model.Attribute) model.Attribute {
 	assert.For(len(val) <= 1, 20, "only one attribute accepted")
 	assert.For(name != "", 21)
 	if len(val) == 1 {
-		n.attr[name] = val[0]
+		if val[0] != nil {
+			n.attr[name] = val[0]
+		} else {
+			delete(n.attr, name)
+		}
 	}
 	return n.attr[name]
 }

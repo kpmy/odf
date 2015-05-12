@@ -1,12 +1,12 @@
 package mappers
 
 import (
+	"github.com/kpmy/ypk/assert"
 	"odf/mappers/attr"
 	"odf/model"
 	"odf/xmlns"
 	"odf/xmlns/office"
 	"reflect"
-	"ypk/assert"
 	"ypk/halt"
 )
 
@@ -52,10 +52,15 @@ func (f *Formatter) Init() {
 	f.ready = true
 }
 
-func (f *Formatter) writeAttr() {
-	if !f.attr.stored {
-		f.attr.Flush()
+func (f *Formatter) makePara() {
+	if pos := f.rider.Pos(); pos.Name() != office.Text || pos.Name() == text.P {
+		f.rider.Pos(f.text)
 	}
+	f.rider.WritePos(New(text.P))
+		f.attr.Flush()
+	f.attr.Fit(text.P, func(a attr.Attributes) {
+		f.rider.Attr(text.StyleName, a.Name())
+	})
 }
 
 func (f *Formatter) WritePara(s string) {
@@ -63,12 +68,16 @@ func (f *Formatter) WritePara(s string) {
 	f.defaultParaMapper.WritePara(s)
 }
 
-func (f *Formatter) WriteString(s string) {
+func (f *Formatter) WriteLn() {
+	f.WriteString("\n")
+}
+
+func (f *Formatter) WriteString(_s string) {
 	assert.For(f.ready, 20)
 	f.defaultParaMapper.WriteString(s)
 }
 
-func (f *Formatter) SetAttr(a attr.Attributes) {
+func (f *Formatter) SetAttr(a attr.Attributes) *Formatter {
 	assert.For(f.ready, 20)
 	if a != nil {
 		n := reflect.TypeOf(a).String()
@@ -84,6 +93,7 @@ func (f *Formatter) SetAttr(a attr.Attributes) {
 	} else {
 		f.attr.reset()
 	}
+	return f
 }
 
 func (f *Formatter) RegisterFont(name, fontface string) {

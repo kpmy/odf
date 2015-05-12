@@ -8,15 +8,14 @@ import (
 )
 
 type ParagraphAttributes struct {
-	align     string
-	pageBreak bool
 	named
+	easy
 }
 
 func (p *ParagraphAttributes) Equal(_a Attributes) (ok bool) {
 	a, ok := _a.(*ParagraphAttributes)
 	if ok {
-		ok = p.align == a.align && p.pageBreak == a.pageBreak
+		ok = p.equal(&a.easy)
 	}
 	return
 }
@@ -26,18 +25,24 @@ func (p *ParagraphAttributes) Fit() model.LeafName { return text.P }
 func (p *ParagraphAttributes) Write(wr model.Writer) {
 	wr.Attr(style.Family, style.FamilyParagraph)
 	wr.WritePos(New(style.ParagraphProperties))
-	wr.Attr(fo.TextAlign, p.align)
-	if p.pageBreak {
-		wr.Attr(fo.BreakBefore, fo.Page)
-	}
+	p.apply(wr)
 }
 
 func (p *ParagraphAttributes) AlignRight() *ParagraphAttributes {
-	p.align = fo.Right
+	p.put(fo.TextAlign, fo.Right, nil)
+	return p
+}
+
+func (p *ParagraphAttributes) AlignCenter() *ParagraphAttributes {
+	p.put(fo.TextAlign, fo.Center, nil)
 	return p
 }
 
 func (p *ParagraphAttributes) PageBreak() *ParagraphAttributes {
-	p.pageBreak = true
+	p.put(fo.BreakBefore, true, func(v value) {
+		if x := v.data.(bool); x {
+			v.wr.Attr(fo.BreakBefore, fo.Page)
+		}
+	})
 	return p
 }

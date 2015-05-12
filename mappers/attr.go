@@ -1,6 +1,7 @@
 package mappers
 
 import (
+	"github.com/kpmy/ypk/halt"
 	"odf/mappers/attr"
 	"odf/model"
 	"odf/xmlns/office"
@@ -8,7 +9,6 @@ import (
 	"odf/xmlns/svg"
 	"odf/xmlns/text"
 	"strconv"
-	"ypk/halt"
 )
 
 type Attr struct {
@@ -56,13 +56,14 @@ func (a *Attr) Init(m model.Model) {
 	a.reset()
 }
 
-func (a *Attr) Fit(n model.LeafName) (ret attr.Attributes) {
+func (a *Attr) Fit(n model.LeafName, callback func(a attr.Attributes)) {
 	fit := make(map[model.LeafName]attr.Attributes)
 	for _, v := range a.current {
 		fit[v.Fit()] = v
 	}
-	ret = fit[n]
-	return
+	if a := fit[n]; a != nil {
+		callback(a)
+	}
 }
 
 func (a *Attr) RegisterFont(name, fontface string) {

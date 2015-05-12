@@ -1,11 +1,12 @@
 package stub
 
 import (
+	"github.com/kpmy/ypk/assert"
+	"github.com/kpmy/ypk/halt"
+	"image/color"
 	"odf/model"
 	"odf/xmlns"
 	"reflect"
-	"ypk/assert"
-	"ypk/halt"
 )
 
 type sr struct {
@@ -180,6 +181,9 @@ func validateAttr(n model.AttrName, val string) {
 }
 
 func castAttr(n model.AttrName, i interface{}) (ret model.Attribute) {
+	if i == nil {
+		return nil
+	}
 	typ := xmlns.Typed[n]
 	switch typ {
 	case xmlns.NONE, xmlns.STRING:
@@ -189,12 +193,17 @@ func castAttr(n model.AttrName, i interface{}) (ret model.Attribute) {
 	case xmlns.ENUM:
 		validateAttr(n, i.(string))
 		ret = &StringAttr{Value: i.(string)}
+	case xmlns.MEASURE:
+		ret = &MeasureAttr{Value: i.(float64)}
+	case xmlns.COLOR:
+		ret = &ColorAttr{Value: i.(color.Color)}
 	default:
 		halt.As(100, typ, reflect.TypeOf(i))
 	}
 	return ret
 }
 
-func (w *sw) Attr(n model.AttrName, val interface{}) {
+func (w *sw) Attr(n model.AttrName, val interface{}) model.Writer {
 	w.pos.Attr(n, castAttr(n, val))
+	return w
 }

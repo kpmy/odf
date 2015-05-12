@@ -2,6 +2,8 @@ package stub
 
 import (
 	"encoding/xml"
+	"fmt"
+	"image/color"
 	"strconv"
 )
 
@@ -28,6 +30,35 @@ func (a *IntAttr) String() string {
 }
 
 func (a *IntAttr) MarshalXMLAttr(name xml.Name) (xa xml.Attr, err error) {
+	xa.Name = name
+	xa.Value = a.String()
+	return
+}
+
+type MeasureAttr struct {
+	Value float64
+}
+
+func (a *MeasureAttr) String() string {
+	return strconv.FormatFloat(a.Value, 'f', 8, 64) + "cm"
+}
+
+func (a *MeasureAttr) MarshalXMLAttr(name xml.Name) (xa xml.Attr, err error) {
+	xa.Name = name
+	xa.Value = a.String()
+	return
+}
+
+type ColorAttr struct {
+	Value color.Color
+}
+
+func (a *ColorAttr) String() string {
+	r, g, b, _ := a.Value.RGBA()
+	return fmt.Sprintf("#%02X%02X%02X", uint8(r), uint8(g), uint8(b))
+}
+
+func (a *ColorAttr) MarshalXMLAttr(name xml.Name) (xa xml.Attr, err error) {
 	xa.Name = name
 	xa.Value = a.String()
 	return
