@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"github.com/kpmy/golorem"
 	"github.com/kpmy/ypk/assert"
+	"image/color"
 	"io"
 	"math/rand"
 	"odf/generators"
@@ -12,6 +13,7 @@ import (
 	"odf/model"
 	_ "odf/model/stub" // необходимо
 	"odf/xmlns"
+	"odf/xmlns/fo"
 	"os"
 	"runtime"
 	"strconv"
@@ -52,6 +54,7 @@ func report(suffix string, fm *mappers.Formatter) {
 		fm.SetAttr(new(attr.TextAttributes).Bold().Size(18))
 		fm.WritePara("TABLE 50x5")
 		fm.SetAttr(nil)
+		fm.SetAttr(new(attr.TableCellAttributes).Border(attr.Border{Width: 0.01, Color: color.Black, Style: fo.Solid}))
 		tm := &mappers.TableMapper{}
 		tm.ConnectTo(fm)
 		tm.Write("test", 50+1, 5) //50+header row

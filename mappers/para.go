@@ -91,6 +91,10 @@ func (p *ParaMapper) WriteString(_s string) {
 				p.fm.attr.Fit(text.Span, func(a attr.Attributes) {
 					p.rider.Pos(p.rider.Pos().Parent())
 				})
+				//skip cr+lf
+				if pos+1 < len(s) && s[pos+1] == '\n' {
+					pos = pos + 1
+				}
 				for pos = pos + 1; pos < len(s); pos++ {
 					buf = append(buf, s[pos])
 				}
