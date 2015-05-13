@@ -35,6 +35,24 @@ func (a *IntAttr) MarshalXMLAttr(name xml.Name) (xa xml.Attr, err error) {
 	return
 }
 
+type BoolAttr struct {
+	Value bool
+}
+
+func (a *BoolAttr) String() string {
+	if a.Value {
+		return "true"
+	} else {
+		return "false"
+	}
+}
+
+func (a *BoolAttr) MarshalXMLAttr(name xml.Name) (xa xml.Attr, err error) {
+	xa.Name = name
+	xa.Value = a.String()
+	return
+}
+
 type MeasureAttr struct {
 	Value float64
 }

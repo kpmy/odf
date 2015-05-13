@@ -6,12 +6,16 @@ import (
 )
 
 const (
-	FontSize    model.AttrName = "fo:font-size"
-	TextAlign   model.AttrName = "fo:text-align"
-	BreakBefore model.AttrName = "fo:break-before"
-	Color       model.AttrName = "fo:color"
-	FontWeight  model.AttrName = "fo:font-weight"
-	FontStyle   model.AttrName = "fo:font-style"
+	FontSize     model.AttrName = "fo:font-size"
+	TextAlign    model.AttrName = "fo:text-align"
+	BreakBefore  model.AttrName = "fo:break-before"
+	Color        model.AttrName = "fo:color"
+	FontWeight   model.AttrName = "fo:font-weight"
+	FontStyle    model.AttrName = "fo:font-style"
+	BorderRight  model.AttrName = "fo:border-right"
+	BorderLeft   model.AttrName = "fo:border-left"
+	BorderTop    model.AttrName = "fo:border-top"
+	BorderBottom model.AttrName = "fo:border-bottom"
 )
 
 const (
@@ -27,6 +31,17 @@ const (
 	Right   = "right"
 	Center  = "center"
 	Justify = "justify"
+)
+
+const (
+	None       = "none"
+	Solid      = "solid"
+	Dotted     = "dotted"
+	Dash       = "dash"
+	LongDash   = "long-dash"
+	DotDash    = "dot-dash"
+	DotDotDash = "dot-dot-dash"
+	Wave       = "wave"
 )
 
 func init() {

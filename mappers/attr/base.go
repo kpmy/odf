@@ -76,3 +76,11 @@ func (e *easy) apply(wr model.Writer) {
 		}
 	}
 }
+
+func triggerBoolAttr(n model.AttrName) func(v value) {
+	return func(v value) {
+		if x := v.data.(bool); x {
+			v.wr.Attr(n, true)
+		}
+	}
+}

@@ -46,6 +46,7 @@ const (
 	MEASURE
 	ENUM
 	COLOR
+	BOOL
 )
 
 type Mime string

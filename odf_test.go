@@ -9,6 +9,8 @@ import (
 	"odf/model"
 	_ "odf/model/stub"
 	"odf/xmlns"
+	"odf/xmlns/fo"
+	"odf/xmlns/table"
 	"os"
 	"testing"
 )
@@ -134,5 +136,26 @@ func TestDraw(t *testing.T) {
 		embed[url] = d
 	}
 	generators.GeneratePackage(m, embed, output, fm.MimeType)
+	assert.For(output.Close() == nil, 20)
+}
+
+func TestTableStyles(t *testing.T) {
+	output, _ := os.OpenFile("test-table-styles.odf", os.O_CREATE|os.O_WRONLY, 0666)
+	m := model.ModelFactory()
+	fm := &mappers.Formatter{}
+	fm.ConnectTo(m)
+	fm.MimeType = xmlns.MimeText
+	fm.Init()
+
+	fm.SetAttr(new(attr.TableAttributes).BorderModel(table.BorderModelCollapsing).AlignCenter().Width(10.0))
+	fm.SetAttr(new(attr.TableRowAttributes).UseOptimalRowHeight()).SetAttr(new(attr.TableColumnAttributes).UseOptimalColumnWidth())
+	fm.SetAttr(new(attr.TableCellAttributes).Border(attr.Border{Width: 0.01, Color: color.Black, Style: fo.Solid}))
+	tm := &mappers.TableMapper{}
+	tm.ConnectTo(fm)
+	tm.Write("test", 5, 10)
+	tt := tm.List["test"]
+	tm.Pos(tt, 0, 0).WriteString("Hello!")
+
+	generators.GeneratePackage(m, nil, output, fm.MimeType)
 	assert.For(output.Close() == nil, 20)
 }

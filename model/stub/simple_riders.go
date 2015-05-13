@@ -177,7 +177,7 @@ func validateAttr(n model.AttrName, val string) {
 			found = true
 		}
 	}
-	assert.For(found, 60)
+	assert.For(found, 60, n, val)
 }
 
 func castAttr(n model.AttrName, i interface{}) (ret model.Attribute) {
@@ -197,6 +197,8 @@ func castAttr(n model.AttrName, i interface{}) (ret model.Attribute) {
 		ret = &MeasureAttr{Value: i.(float64)}
 	case xmlns.COLOR:
 		ret = &ColorAttr{Value: i.(color.Color)}
+	case xmlns.BOOL:
+		ret = &BoolAttr{Value: i.(bool)}
 	default:
 		halt.As(100, typ, reflect.TypeOf(i))
 	}

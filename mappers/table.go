@@ -2,6 +2,7 @@ package mappers
 
 import (
 	"github.com/kpmy/ypk/assert"
+	"odf/mappers/attr"
 	"odf/model"
 	"odf/xmlns/table"
 )
@@ -42,20 +43,36 @@ func (t *TableMapper) Write(name string, rows, cols int) {
 	wr.Pos(t.fm.root)
 	this.Root = wr.WritePos(New(table.Table))
 	wr.Attr(table.Name, name)
+	t.fm.attr.Fit(table.Table, func(a attr.Attributes) {
+		wr.Attr(table.StyleName, a.Name())
+	})
 	for i := 0; i < this.Columns; i++ {
 		col := New(table.TableColumn)
 		this.colsCache = append(this.colsCache, col)
 		this.cellCache = append(this.cellCache, make([]model.Leaf, 0))
 		wr.Write(col)
+		cwr := t.newWriter(wr)
+		cwr.Pos(col)
+		t.fm.attr.Fit(table.TableColumn, func(a attr.Attributes) {
+			cwr.Attr(table.StyleName, a.Name())
+		})
 	}
 	for i := 0; i < this.Rows; i++ {
 		rwr := t.newWriter(wr)
 		row := rwr.WritePos(New(table.TableRow))
+		t.fm.attr.Fit(table.TableRow, func(a attr.Attributes) {
+			rwr.Attr(table.StyleName, a.Name())
+		})
 		this.rowCache = append(this.rowCache, row)
 		for j := 0; j < this.Columns; j++ {
 			cell := New(table.TableCell)
 			this.cellCache[j] = append(this.cellCache[j], cell)
 			rwr.Write(cell)
+			cwr := t.newWriter(rwr)
+			cwr.Pos(cell)
+			t.fm.attr.Fit(table.TableCell, func(a attr.Attributes) {
+				cwr.Attr(table.StyleName, a.Name())
+			})
 		}
 	}
 }
@@ -67,11 +84,19 @@ func (t *TableMapper) WriteRows(this *Table, rows int) {
 	for i := 0; i < rows; i++ {
 		wr.Pos(this.Root)
 		row := wr.WritePos(New(table.TableRow))
+		t.fm.attr.Fit(table.TableRow, func(a attr.Attributes) {
+			wr.Attr(table.StyleName, a.Name())
+		})
 		this.rowCache = append(this.rowCache, row)
 		for j := 0; j < this.Columns; j++ {
 			cell := New(table.TableCell)
 			this.cellCache[j] = append(this.cellCache[j], cell)
 			wr.Write(cell)
+			cwr := t.newWriter(wr)
+			cwr.Pos(cell)
+			t.fm.attr.Fit(table.TableCell, func(a attr.Attributes) {
+				cwr.Attr(table.StyleName, a.Name())
+			})
 		}
 		this.Rows++
 	}
@@ -88,6 +113,9 @@ func (t *TableMapper) WriteColumns(this *Table, cols int) {
 	for i := 0; i < cols; i++ {
 		wr.Pos(this.Root)
 		col := wr.WritePos(New(table.TableColumn), last)
+		t.fm.attr.Fit(table.TableColumn, func(a attr.Attributes) {
+			wr.Attr(table.StyleName, a.Name())
+		})
 		this.colsCache = append(this.colsCache, col)
 		this.cellCache = append(this.cellCache, make([]model.Leaf, 0))
 		this.Columns++
@@ -107,6 +135,11 @@ func (t *TableMapper) WriteCells(this *Table, _row int, cells int) {
 		cell := New(table.TableCell)
 		this.cellCache[i] = append(this.cellCache[i], cell)
 		wr.Write(cell)
+		cwr := t.newWriter(wr)
+		cwr.Pos(cell)
+		t.fm.attr.Fit(table.TableCell, func(a attr.Attributes) {
+			cwr.Attr(table.StyleName, a.Name())
+		})
 	}
 }
 
