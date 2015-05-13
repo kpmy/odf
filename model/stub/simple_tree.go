@@ -1,3 +1,5 @@
+//Package stub is an implementation of document model, nodes, attributes and riders, it's a lightweight analog of DOM
+//There is no need to create separate type for each ODF document node, because most of them are defined only by it's name, that's why we build a simle tree model where only root nodel of document are special, because they are translated into files of document-package. But they still support Node interface and may be used in other implementations as regular nodes
 package stub
 
 /*

@@ -7,6 +7,7 @@ import (
 	"strconv"
 )
 
+//Border style of table cell
 type Border struct {
 	Width float64
 	Color color.Color

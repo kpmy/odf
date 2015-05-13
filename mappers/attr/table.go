@@ -7,6 +7,7 @@ import (
 	"odf/xmlns/table"
 )
 
+//TableAttributes is a Table Family style fluent builder
 type TableAttributes struct {
 	named
 	easy
@@ -28,31 +29,37 @@ func (t *TableAttributes) Write(wr model.Writer) {
 	t.apply(wr)
 }
 
+//BorderModel of table (table.BorderModelCollapsing, table.BorderModelSeparating
 func (t *TableAttributes) BorderModel(m string) *TableAttributes {
 	t.put(table.BorderModel, m, nil)
 	return t
 }
 
+//AlignLeft table on page
 func (t *TableAttributes) AlignLeft() *TableAttributes {
 	t.put(table.Align, table.AlignLeft, nil)
 	return t
 }
 
+//AlignRight table on page
 func (t *TableAttributes) AlignRight() *TableAttributes {
 	t.put(table.Align, table.AlignRight, nil)
 	return t
 }
 
+//AlignCenter table on page
 func (t *TableAttributes) AlignCenter() *TableAttributes {
 	t.put(table.Align, table.AlignCenter, nil)
 	return t
 }
 
+//Width of whole table
 func (t *TableAttributes) Width(w float64) *TableAttributes {
 	t.put(style.Width, w, nil)
 	return t
 }
 
+//TableRowAttributes represents Table Row Family style fluent builder
 type TableRowAttributes struct {
 	named
 	easy
@@ -74,6 +81,7 @@ func (t *TableRowAttributes) Write(wr model.Writer) {
 	t.apply(wr)
 }
 
+//UseOptimalRowHeight allows to auto-height rows when displayed
 func (t *TableRowAttributes) UseOptimalRowHeight() *TableRowAttributes {
 	t.put(style.UseOptimalRowHeight, true, triggerBoolAttr(style.UseOptimalRowHeight))
 	return t
@@ -84,6 +92,7 @@ type TableColumnAttributes struct {
 	easy
 }
 
+//TableColumnAttributes represents Table Column Family style fluent builder
 func (t *TableColumnAttributes) Equal(_a Attributes) (ok bool) {
 	a, ok := _a.(*TableColumnAttributes)
 	if ok {
@@ -100,11 +109,13 @@ func (t *TableColumnAttributes) Write(wr model.Writer) {
 	t.apply(wr)
 }
 
+//UseOptimalColumnWidth allows to auto-width columns when displayed
 func (t *TableColumnAttributes) UseOptimalColumnWidth() *TableColumnAttributes {
 	t.put(style.UseOptimalColumnWidth, true, triggerBoolAttr(style.UseOptimalColumnWidth))
 	return t
 }
 
+//TableCellAttributes represents Table Cell Family style fluent builder
 type TableCellAttributes struct {
 	named
 	easy
@@ -126,6 +137,7 @@ func (t *TableCellAttributes) Write(wr model.Writer) {
 	t.apply(wr)
 }
 
+//Border sets attributes for all borders (left, right, top, bottom)
 func (t *TableCellAttributes) Border(b Border) *TableCellAttributes {
 	t.put(fo.BorderRight, b.String(), nil)
 	t.put(fo.BorderLeft, b.String(), nil)

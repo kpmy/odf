@@ -5,8 +5,10 @@ import (
 	"odf/model"
 )
 
+//New is shortcut for factory function model.ModelFactory
 var New func(name model.LeafName) model.Leaf
 
+//Attributes interface that is supported by current version of mappers.Attr container
 type Attributes interface {
 	Name(...string) string
 	Equal(Attributes) bool

@@ -14,11 +14,13 @@ import (
 	"time"
 )
 
+//Draw holds image data and it's mimetype
 type Draw struct {
 	rd   io.Reader
 	mime xmlns.Mime
 }
 
+//NewDraw constructor
 func NewDraw(source io.Reader, _mime xmlns.Mime) *Draw {
 	return &Draw{rd: source, mime: _mime}
 }
@@ -36,7 +38,7 @@ func nextUrl() (ret string) {
 	return
 }
 
-//generators.Embeddable
+//Reader implements generators.Embeddable
 func (d *Draw) Reader() io.Reader {
 	return d.rd
 }
@@ -45,7 +47,7 @@ func (d *Draw) MimeType() xmlns.Mime {
 	return d.mime
 }
 
-//запись изображения
+//WriteTo writes image (link to image) to document model, don't forget to pass Draw as Embeddable to package generator
 func (d *Draw) WriteTo(fm *Formatter, name string, w, h interface{}) string {
 	fm.defaultParaMapper.makePara()
 	wr := fm.m.NewWriter()

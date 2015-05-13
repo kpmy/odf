@@ -11,6 +11,7 @@ import (
 	"strconv"
 )
 
+//Attr holds a number of style nodes of document model and writes attributes. Also it holds cache of recently used attributes for reuse
 type Attr struct {
 	doc     model.Model
 	ds      model.Leaf //document styles
@@ -37,6 +38,7 @@ func (a *Attr) reset() {
 	a.current = make(map[string]attr.Attributes)
 }
 
+//Init called when empty document is initialized
 func (a *Attr) Init(m model.Model) {
 	a.doc = m
 	wr := a.doc.NewWriter()
@@ -56,6 +58,7 @@ func (a *Attr) Init(m model.Model) {
 	a.reset()
 }
 
+//Fit finds appropriate attributes for given name and calls closure for applying attributes
 func (a *Attr) Fit(n model.LeafName, callback func(a attr.Attributes)) {
 	fit := make(map[model.LeafName]attr.Attributes)
 	for _, v := range a.current {
@@ -66,6 +69,7 @@ func (a *Attr) Fit(n model.LeafName, callback func(a attr.Attributes)) {
 	}
 }
 
+//RegisterFont writes font entry to Font Face Declaration section
 func (a *Attr) RegisterFont(name, fontface string) {
 	if a.fonts[name] == nil {
 		wr := a.doc.NewWriter()
@@ -81,6 +85,7 @@ func (a *Attr) RegisterFont(name, fontface string) {
 	}
 }
 
+//Flush writes styles to document model
 func (a *Attr) Flush() {
 	if !a.stored {
 		wr := a.doc.NewWriter()
@@ -100,6 +105,7 @@ func (a *Attr) Flush() {
 	}
 }
 
+//OldAttr return already written attributes for new attribute if their contents equals
 func (a *Attr) OldAttr(n attr.Attributes) attr.Attributes {
 	for _, v := range a.old {
 		if v.Equal(n) {
@@ -109,6 +115,7 @@ func (a *Attr) OldAttr(n attr.Attributes) attr.Attributes {
 	return nil
 }
 
+//SetDefaults sets default attributes of document, only TextAttributes and ParagraphAttributes supported by now
 func (a *Attr) SetDefaults(al ...attr.Attributes) {
 	wr := a.doc.NewWriter()
 	wr.Pos(a.ds)

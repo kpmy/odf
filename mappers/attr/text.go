@@ -8,6 +8,7 @@ import (
 	"odf/xmlns/text"
 )
 
+//TextAttributes is a Text Family fluent style builder
 type TextAttributes struct {
 	fontFace string
 	size     int
@@ -45,26 +46,31 @@ func (t *TextAttributes) Write(wr model.Writer) {
 	}
 }
 
+//Size of text in points
 func (t *TextAttributes) Size(s int) *TextAttributes {
 	t.size = s
 	return t
 }
 
+//FontFace of text (font-faces are registered in mappers.Formatter
 func (t *TextAttributes) FontFace(name string) *TextAttributes {
 	t.fontFace = name
 	return t
 }
 
+//Color of text
 func (t *TextAttributes) Color(col color.Color) *TextAttributes {
 	t.col = col
 	return t
 }
 
+//Bold style of text
 func (t *TextAttributes) Bold() *TextAttributes {
 	t.bold = true
 	return t
 }
 
+//Italic style of text
 func (t *TextAttributes) Italic() *TextAttributes {
 	t.italic = true
 	return t

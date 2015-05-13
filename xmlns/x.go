@@ -1,3 +1,5 @@
+//Package xmlns contains any constants related to ODF project, and also string names and values of ODF document nodes and attributes
+//Also it contains some validation routines and value format descriptions
 package xmlns
 
 import (

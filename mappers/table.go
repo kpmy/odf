@@ -7,6 +7,7 @@ import (
 	"odf/xmlns/table"
 )
 
+//Table structure holds the table structure and identifies it for TableMapper
 type Table struct {
 	Rows                int
 	Columns             int
@@ -15,11 +16,13 @@ type Table struct {
 	cellCache           [][]model.Leaf
 }
 
+//TableMapper writes and manages tables in document model
 type TableMapper struct {
 	List map[string]*Table
 	fm   *Formatter
 }
 
+//Ready or not
 func (t *TableMapper) Ready() bool {
 	return t.fm != nil && t.fm.ready
 }
@@ -28,11 +31,13 @@ func (t *TableMapper) newWriter(old ...model.Writer) model.Writer {
 	return t.fm.m.NewWriter(old...)
 }
 
+//ConnectTo any valid Formatter and it's document model
 func (t *TableMapper) ConnectTo(fm *Formatter) {
 	t.fm = fm
 	t.List = make(map[string]*Table)
 }
 
+//Write a Table with given name and dimensions, table object is stored internally and can be accessed by name, latest set TableAttributes, TableRowAttributes, TableColumnAttributes and TableCellAttributes are used
 func (t *TableMapper) Write(name string, rows, cols int) {
 	assert.For(t.Ready(), 20)
 	assert.For(name != "" && t.List[name] == nil, 21)
@@ -77,6 +82,7 @@ func (t *TableMapper) Write(name string, rows, cols int) {
 	}
 }
 
+//WriteRows to existing table latest set TableRowAttributes and TableCellAttributes are used
 func (t *TableMapper) WriteRows(this *Table, rows int) {
 	assert.For(t.Ready(), 20)
 	t.fm.attr.Flush()
@@ -102,6 +108,7 @@ func (t *TableMapper) WriteRows(this *Table, rows int) {
 	}
 }
 
+//WriteColumns to existing table latest set TableColumnAttributes and TableCellAttributes are used
 func (t *TableMapper) WriteColumns(this *Table, cols int) {
 	assert.For(t.Ready(), 20)
 	t.fm.attr.Flush()
@@ -125,6 +132,7 @@ func (t *TableMapper) WriteColumns(this *Table, cols int) {
 	}
 }
 
+//Write cells to existing table latest set TableCellAttributes are used
 func (t *TableMapper) WriteCells(this *Table, _row int, cells int) {
 	assert.For(t.Ready(), 20)
 	t.fm.attr.Flush()
@@ -143,6 +151,7 @@ func (t *TableMapper) WriteCells(this *Table, _row int, cells int) {
 	}
 }
 
+//Span merges visually
 func (t *TableMapper) Span(this *Table, row, col int, rowspan, colspan int) {
 	assert.For(t.Ready(), 20)
 	assert.For(rowspan > 0, 21)
@@ -153,6 +162,7 @@ func (t *TableMapper) Span(this *Table, row, col int, rowspan, colspan int) {
 	wr.Attr(table.NumberColumnsSpanned, colspan)
 }
 
+//Pos sets mapper to the cell with given coordinates
 func (t *TableMapper) Pos(this *Table, row, col int) *ParaMapper {
 	ret := new(ParaMapper)
 	ret.ConnectTo(t.fm)

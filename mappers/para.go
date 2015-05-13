@@ -7,6 +7,7 @@ import (
 	"odf/xmlns/text"
 )
 
+//ParaMapper writes and controls text content in document model
 type ParaMapper struct {
 	fm    *Formatter
 	rider model.Writer
@@ -23,12 +24,14 @@ func (p *ParaMapper) makePara() {
 	})
 }
 
+//ConnectTo Formatter that holds document model
 func (p *ParaMapper) ConnectTo(fm *Formatter) {
 	p.fm = fm
 	p.rider = fm.m.NewWriter()
 	p.rider.Pos(fm.root)
 }
 
+//WritePara writes text in new paragraph with the most latest text and paragraph attributes set to connected Formatter
 func (p *ParaMapper) WritePara(s string) {
 	if pos := p.rider.Pos(); pos.Name() == text.P {
 		p.rider.Pos(pos.Parent())
@@ -41,6 +44,8 @@ func (p *ParaMapper) WritePara(s string) {
 	p.WriteString(s)
 
 }
+
+//WriteString writes a text within existing paragraph or creates new paragraph if symbol \r met
 func (p *ParaMapper) WriteString(_s string) {
 	assert.For(p.fm.ready, 20)
 

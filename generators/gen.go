@@ -13,18 +13,22 @@ import (
 	"odf/xmlns/urn"
 )
 
+//Embeddable is any object that can provide []byte data for embedding in document package file (pictures for example)
 type Embeddable interface {
 	MimeType() xmlns.Mime
 	Reader() io.Reader
 }
 
+//Parts is a list of root "files" of document package
 type Parts map[string]*bytes.Buffer
 
+//Entry is a part of Manifest
 type Entry struct {
 	MediaType string `xml:"manifest:media-type,attr"`
 	FullPath  string `xml:"manifest:full-path,attr"`
 }
 
+//Manifest file structure, contains descriptors for any parts of document
 type Manifest struct {
 	XMLName xml.Name
 	NS      string  `xml:"xmlns:manifest,attr"`
@@ -62,6 +66,7 @@ func docParts(m model.Model) (ret Parts) {
 	return
 }
 
+//GeneratePackage builds a zip-archived content of document model and embedded files and writes content to target Writer
 func GeneratePackage(m model.Model, embed map[string]Embeddable, out io.Writer, mimetype xmlns.Mime) {
 	z := zip.NewWriter(out)
 	mime := &zip.FileHeader{Name: xmlns.Mimetype, Method: zip.Store} //файл mimetype не надо сжимать, режим Store

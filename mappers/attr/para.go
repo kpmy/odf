@@ -7,6 +7,7 @@ import (
 	"odf/xmlns/text"
 )
 
+//ParagraphAttributes is ODF Paragraph Family style fluent builder
 type ParagraphAttributes struct {
 	named
 	easy
@@ -28,16 +29,19 @@ func (p *ParagraphAttributes) Write(wr model.Writer) {
 	p.apply(wr)
 }
 
+//AlignRight on page
 func (p *ParagraphAttributes) AlignRight() *ParagraphAttributes {
 	p.put(fo.TextAlign, fo.Right, nil)
 	return p
 }
 
+//AlignCenter on page
 func (p *ParagraphAttributes) AlignCenter() *ParagraphAttributes {
 	p.put(fo.TextAlign, fo.Center, nil)
 	return p
 }
 
+//PageBreak with new paragraph written (it will be first on new page)
 func (p *ParagraphAttributes) PageBreak() *ParagraphAttributes {
 	p.put(fo.BreakBefore, true, func(v value) {
 		if x := v.data.(bool); x {
