@@ -15,6 +15,15 @@
     go get github.com/kpmy/odf
 В пакете demo есть пример использования ODF для формирования отчета.
 
+## Description
+This library is for generation of ODF document with Go.
+
+You can produce a document with content by calling the Formatter methods.
+Then you can save this document to zip-file .odf
+
+No need for your code to handle with ODF XML content. 
+More examples in demo/report.go
+
 ## Example
 
     package main
