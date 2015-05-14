@@ -11,6 +11,8 @@ import (
 
 func main() {
 	if output, err := os.Create("demo2.odf"); err == nil {
+		//cleanup
+		defer output.Close()
 		//we need an empty model
 		m := model.ModelFactory()
 		//standard formatter
@@ -25,7 +27,5 @@ func main() {
 		fm.WriteString("Hello, World!")
 		//store file
 		generators.GeneratePackage(m, nil, output, fm.MimeType)
-		//cleanup
-		defer output.Close()
 	}
 }
