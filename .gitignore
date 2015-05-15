@@ -23,3 +23,13 @@ _testmain.go
 *.test
 *.prof
 *.odf
+
+.buildlog
+.DS_Store
+.idea
+.pub/
+build/
+packages
+pubspec.lock 
+/pubspec.lock
+gh-pages

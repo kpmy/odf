@@ -107,5 +107,7 @@ func (f *Formatter) SetDefaults(a ...attr.Attributes) {
 }
 
 func init() {
-	New = model.LeafFactory
+	New = func(n model.LeafName) model.Leaf {
+		return model.LeafFactory(n)
+	}
 }
