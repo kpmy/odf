@@ -767,6 +767,9 @@ var dart = [
   },
   JSNumber: {
     "^": "Interceptor;",
+    get$isFinite: function(receiver) {
+      return isFinite(receiver);
+    },
     remainder$1: function(receiver, b) {
       return receiver % b;
     },
@@ -1364,15 +1367,7 @@ var dart = [
         t1.clear$0(0);
       for (t1 = this.ports, t2 = t1.get$values(t1), t2 = H.setRuntimeTypeInfo(new H.MappedIterator(null, J.get$iterator$ax(t2._iterable), t2._f), [H.getTypeArgumentByIndex(t2, 0), H.getTypeArgumentByIndex(t2, 1)]); t2.moveNext$0();)
         t2._current.__isolate_helper$_close$0();
-      if (t1.__js_helper$_length > 0) {
-        t1._last = null;
-        t1._first = null;
-        t1._rest = null;
-        t1._nums = null;
-        t1._strings = null;
-        t1.__js_helper$_length = 0;
-        t1._modifications = t1._modifications + 1 & 67108863;
-      }
+      t1.clear$0(0);
       this.weakPorts.clear$0(0);
       init.globalState.isolates.remove$1(0, this.id);
       this.errorPorts.clear$0(0);
@@ -1978,6 +1973,16 @@ var dart = [
   },
   Primitives_objectToString: function(object) {
     return "Instance of '" + H.Primitives_objectTypeName(object) + "'";
+  },
+  Primitives_stringFromCharCode: function(charCode) {
+    var bits;
+    if (charCode <= 65535)
+      return String.fromCharCode(charCode);
+    if (charCode <= 1114111) {
+      bits = charCode - 65536;
+      return String.fromCharCode((55296 | C.JSInt_methods._shrOtherPositive$1(bits, 10)) >>> 0, 56320 | bits & 1023);
+    }
+    throw H.wrapException(P.RangeError$range(charCode, 0, 1114111, null, null));
   },
   Primitives_lazyAsJsDate: function(receiver) {
     if (receiver.date === void 0)
@@ -3322,6 +3327,17 @@ var dart = [
       this._unlinkCell$1(cell);
       return cell.get$hashMapCellValue();
     },
+    clear$0: function(_) {
+      if (this.__js_helper$_length > 0) {
+        this._last = null;
+        this._first = null;
+        this._rest = null;
+        this._nums = null;
+        this._strings = null;
+        this.__js_helper$_length = 0;
+        this._modifications = this._modifications + 1 & 67108863;
+      }
+    },
     forEach$1: function(_, action) {
       var cell, modifications;
       cell = this._first;
@@ -3399,6 +3415,7 @@ var dart = [
       return P.Maps_mapToString(this);
     },
     $isInternalMap: 1,
+    $isMap: 1,
     static: {JsLinkedHashMap__newHashTable: function() {
         var table = Object.create(null);
         table["<non-identifier-key>"] = table;
@@ -4410,14 +4427,14 @@ var dart = [
     }
   },
   Stream_forEach_closure: {
-    "^": "Closure;_async$_box_0,_captured_this_1,_captured_action_2,_captured_future_3",
+    "^": "Closure;_async$_box_0,_async$_captured_this_1,_captured_action_2,_captured_future_3",
     call$1: [function(element) {
       P._runUserCode(new P.Stream_forEach__closure(this._captured_action_2, element), new P.Stream_forEach__closure0(), P._cancelAndErrorClosure(this._async$_box_0._captured_subscription_0, this._captured_future_3));
     }, null, null, 2, 0, null, 18, "call"],
     $signature: function() {
       return H.computeSignature(function(T) {
         return {func: "", args: [T]};
-      }, this._captured_this_1, "Stream");
+      }, this._async$_captured_this_1, "Stream");
     }
   },
   Stream_forEach__closure: {
@@ -5677,6 +5694,392 @@ var dart = [
     "^": "SetMixin;"
   }
 }],
+["dart.convert", "dart:convert", , P, {
+  "^": "",
+  _convertJsonToDartLazy: function(object) {
+    var i;
+    if (object == null)
+      return;
+    if (typeof object != "object")
+      return object;
+    if (Object.getPrototypeOf(object) !== Array.prototype)
+      return new P._JsonMap(object, Object.create(null), null);
+    for (i = 0; i < object.length; ++i)
+      object[i] = P._convertJsonToDartLazy(object[i]);
+    return object;
+  },
+  _parseJson: function(source, reviver) {
+    var parsed, e, t1, exception;
+    t1 = source;
+    if (typeof t1 !== "string")
+      throw H.wrapException(P.ArgumentError$(source));
+    parsed = null;
+    try {
+      parsed = JSON.parse(source);
+    } catch (exception) {
+      t1 = H.unwrapException(exception);
+      e = t1;
+      throw H.wrapException(P.FormatException$(String(e), null, null));
+    }
+    return P._convertJsonToDartLazy(parsed);
+  },
+  _defaultToEncodable: [function(object) {
+    return object.toJson$0();
+  }, "call$1", "_defaultToEncodable$closure", 2, 0, 21, 0],
+  _JsonMap: {
+    "^": "Object;_original,_processed,_data",
+    $index: function(_, key) {
+      var t1, result;
+      t1 = this._processed;
+      if (t1 == null)
+        return this._data.$index(0, key);
+      else if (typeof key !== "string")
+        return;
+      else {
+        result = t1[key];
+        return typeof result == "undefined" ? this._process$1(key) : result;
+      }
+    },
+    get$length: function(_) {
+      var t1;
+      if (this._processed == null) {
+        t1 = this._data;
+        t1 = t1.get$length(t1);
+      } else
+        t1 = this._computeKeys$0().length;
+      return t1;
+    },
+    get$isEmpty: function(_) {
+      var t1;
+      if (this._processed == null) {
+        t1 = this._data;
+        t1 = t1.get$length(t1);
+      } else
+        t1 = this._computeKeys$0().length;
+      return t1 === 0;
+    },
+    $indexSet: function(_, key, value) {
+      var processed, original;
+      if (this._processed == null)
+        this._data.$indexSet(0, key, value);
+      else if (this.containsKey$1(key)) {
+        processed = this._processed;
+        processed[key] = value;
+        original = this._original;
+        if (original == null ? processed != null : original !== processed)
+          original[key] = null;
+      } else
+        this._upgrade$0().$indexSet(0, key, value);
+    },
+    containsKey$1: function(key) {
+      if (this._processed == null)
+        return this._data.containsKey$1(key);
+      if (typeof key !== "string")
+        return false;
+      return Object.prototype.hasOwnProperty.call(this._original, key);
+    },
+    forEach$1: function(_, f) {
+      var keys, i, key, value;
+      if (this._processed == null)
+        return this._data.forEach$1(0, f);
+      keys = this._computeKeys$0();
+      for (i = 0; i < keys.length; ++i) {
+        key = keys[i];
+        value = this._processed[key];
+        if (typeof value == "undefined") {
+          value = P._convertJsonToDartLazy(this._original[key]);
+          this._processed[key] = value;
+        }
+        f.call$2(key, value);
+        if (keys !== this._data)
+          throw H.wrapException(P.ConcurrentModificationError$(this));
+      }
+    },
+    toString$0: function(_) {
+      return P.Maps_mapToString(this);
+    },
+    _computeKeys$0: function() {
+      var keys = this._data;
+      if (keys == null) {
+        keys = Object.keys(this._original);
+        this._data = keys;
+      }
+      return keys;
+    },
+    _upgrade$0: function() {
+      var result, keys, i, t1, key;
+      if (this._processed == null)
+        return this._data;
+      result = P.LinkedHashMap_LinkedHashMap$_empty(null, null);
+      keys = this._computeKeys$0();
+      for (i = 0; t1 = keys.length, i < t1; ++i) {
+        key = keys[i];
+        result.$indexSet(0, key, this.$index(0, key));
+      }
+      if (t1 === 0)
+        keys.push(null);
+      else
+        C.JSArray_methods.set$length(keys, 0);
+      this._processed = null;
+      this._original = null;
+      this._data = result;
+      return result;
+    },
+    _process$1: function(key) {
+      var result;
+      if (!Object.prototype.hasOwnProperty.call(this._original, key))
+        return;
+      result = P._convertJsonToDartLazy(this._original[key]);
+      return this._processed[key] = result;
+    },
+    $isMap: 1,
+    $asMap: $.functionThatReturnsNull
+  },
+  Codec: {
+    "^": "Object;"
+  },
+  Converter: {
+    "^": "Object;"
+  },
+  JsonUnsupportedObjectError: {
+    "^": "Error;unsupportedObject,cause",
+    toString$0: function(_) {
+      if (this.cause != null)
+        return "Converting object to an encodable object failed.";
+      else
+        return "Converting object did not return an encodable object.";
+    },
+    static: {JsonUnsupportedObjectError$: function(unsupportedObject, cause) {
+        return new P.JsonUnsupportedObjectError(unsupportedObject, cause);
+      }}
+  },
+  JsonCyclicError: {
+    "^": "JsonUnsupportedObjectError;unsupportedObject,cause",
+    toString$0: function(_) {
+      return "Cyclic error in JSON stringify";
+    }
+  },
+  JsonCodec: {
+    "^": "Codec;_reviver,_toEncodable",
+    decode$2$reviver: function(source, reviver) {
+      return P._parseJson(source, this.get$decoder()._reviver);
+    },
+    decode$1: function(source) {
+      return this.decode$2$reviver(source, null);
+    },
+    encode$2$toEncodable: function(value, toEncodable) {
+      var t1 = this.get$encoder();
+      return P._JsonStringStringifier_stringify(value, t1._toEncodable, t1.indent);
+    },
+    encode$1: function(value) {
+      return this.encode$2$toEncodable(value, null);
+    },
+    get$encoder: function() {
+      return C.JsonEncoder_null_null;
+    },
+    get$decoder: function() {
+      return C.JsonDecoder_null;
+    }
+  },
+  JsonEncoder: {
+    "^": "Converter;indent,_toEncodable"
+  },
+  JsonDecoder: {
+    "^": "Converter;_reviver"
+  },
+  _JsonStringifier: {
+    "^": "Object;",
+    writeStringContent$1: function(s) {
+      var t1, $length, offset, i, charCode, t2;
+      t1 = J.getInterceptor$asx(s);
+      $length = t1.get$length(s);
+      if (typeof $length !== "number")
+        return H.iae($length);
+      offset = 0;
+      i = 0;
+      for (; i < $length; ++i) {
+        charCode = t1.codeUnitAt$1(s, i);
+        if (charCode > 92)
+          continue;
+        if (charCode < 32) {
+          if (i > offset)
+            this.writeStringSlice$3(s, offset, i);
+          offset = i + 1;
+          this.writeCharCode$1(92);
+          switch (charCode) {
+            case 8:
+              this.writeCharCode$1(98);
+              break;
+            case 9:
+              this.writeCharCode$1(116);
+              break;
+            case 10:
+              this.writeCharCode$1(110);
+              break;
+            case 12:
+              this.writeCharCode$1(102);
+              break;
+            case 13:
+              this.writeCharCode$1(114);
+              break;
+            default:
+              this.writeCharCode$1(117);
+              this.writeCharCode$1(48);
+              this.writeCharCode$1(48);
+              t2 = charCode >>> 4 & 15;
+              this.writeCharCode$1(t2 < 10 ? 48 + t2 : 87 + t2);
+              t2 = charCode & 15;
+              this.writeCharCode$1(t2 < 10 ? 48 + t2 : 87 + t2);
+              break;
+          }
+        } else if (charCode === 34 || charCode === 92) {
+          if (i > offset)
+            this.writeStringSlice$3(s, offset, i);
+          offset = i + 1;
+          this.writeCharCode$1(92);
+          this.writeCharCode$1(charCode);
+        }
+      }
+      if (offset === 0)
+        this.writeString$1(s);
+      else if (offset < $length)
+        this.writeStringSlice$3(s, offset, $length);
+    },
+    _checkCycle$1: function(object) {
+      var t1, t2, i, t3;
+      for (t1 = this._seen, t2 = t1.length, i = 0; i < t2; ++i) {
+        t3 = t1[i];
+        if (object == null ? t3 == null : object === t3)
+          throw H.wrapException(new P.JsonCyclicError(object, null));
+      }
+      t1.push(object);
+    },
+    _removeSeen$1: function(object) {
+      var t1 = this._seen;
+      if (0 >= t1.length)
+        return H.ioore(t1, 0);
+      t1.pop();
+    },
+    writeObject$1: function(object) {
+      var customJson, e, t1, exception;
+      if (this.writeJsonValue$1(object))
+        return;
+      this._checkCycle$1(object);
+      try {
+        customJson = this._toEncodable$1(object);
+        if (!this.writeJsonValue$1(customJson)) {
+          t1 = P.JsonUnsupportedObjectError$(object, null);
+          throw H.wrapException(t1);
+        }
+        t1 = this._seen;
+        if (0 >= t1.length)
+          return H.ioore(t1, 0);
+        t1.pop();
+      } catch (exception) {
+        t1 = H.unwrapException(exception);
+        e = t1;
+        throw H.wrapException(P.JsonUnsupportedObjectError$(object, e));
+      }
+    },
+    writeJsonValue$1: function(object) {
+      var t1;
+      if (typeof object === "number") {
+        if (!C.JSNumber_methods.get$isFinite(object))
+          return false;
+        this.writeNumber$1(object);
+        return true;
+      } else if (object === true) {
+        this.writeString$1("true");
+        return true;
+      } else if (object === false) {
+        this.writeString$1("false");
+        return true;
+      } else if (object == null) {
+        this.writeString$1("null");
+        return true;
+      } else if (typeof object === "string") {
+        this.writeString$1("\"");
+        this.writeStringContent$1(object);
+        this.writeString$1("\"");
+        return true;
+      } else {
+        t1 = J.getInterceptor(object);
+        if (!!t1.$isList) {
+          this._checkCycle$1(object);
+          this.writeList$1(object);
+          this._removeSeen$1(object);
+          return true;
+        } else if (!!t1.$isMap) {
+          this._checkCycle$1(object);
+          this.writeMap$1(object);
+          this._removeSeen$1(object);
+          return true;
+        } else
+          return false;
+      }
+    },
+    writeList$1: function(list) {
+      var t1, i;
+      this.writeString$1("[");
+      t1 = J.getInterceptor$asx(list);
+      if (t1.get$length(list) > 0) {
+        this.writeObject$1(t1.$index(list, 0));
+        for (i = 1; i < t1.get$length(list); ++i) {
+          this.writeString$1(",");
+          this.writeObject$1(t1.$index(list, i));
+        }
+      }
+      this.writeString$1("]");
+    },
+    writeMap$1: function(map) {
+      var t1 = {};
+      this.writeString$1("{");
+      t1._captured_separator_0 = "\"";
+      map.forEach$1(0, new P._JsonStringifier_writeMap_closure(t1, this));
+      this.writeString$1("}");
+    },
+    _toEncodable$1: function(arg0) {
+      return this._toEncodable.call$1(arg0);
+    }
+  },
+  _JsonStringifier_writeMap_closure: {
+    "^": "Closure:3;_convert$_box_0,_captured_this_1",
+    call$2: function(key, value) {
+      var t1, t2;
+      t1 = this._captured_this_1;
+      t2 = this._convert$_box_0;
+      t1.writeString$1(t2._captured_separator_0);
+      t2._captured_separator_0 = ",\"";
+      t1.writeStringContent$1(key);
+      t1.writeString$1("\":");
+      t1.writeObject$1(value);
+    }
+  },
+  _JsonStringStringifier: {
+    "^": "_JsonStringifier;_sink,_seen,_toEncodable",
+    writeNumber$1: function(number) {
+      this._sink._contents += C.JSNumber_methods.toString$0(number);
+    },
+    writeString$1: function(string) {
+      this._sink._contents += H.S(string);
+    },
+    writeStringSlice$3: function(string, start, end) {
+      this._sink._contents += J.substring$2$s(string, start, end);
+    },
+    writeCharCode$1: function(charCode) {
+      this._sink._contents += H.Primitives_stringFromCharCode(charCode);
+    },
+    static: {_JsonStringStringifier_stringify: function(object, toEncodable, indent) {
+        var output, t1, stringifier;
+        output = new P.StringBuffer("");
+        t1 = P._defaultToEncodable$closure();
+        stringifier = new P._JsonStringStringifier(output, [], t1);
+        stringifier.writeObject$1(object);
+        t1 = output._contents;
+        return t1.charCodeAt(0) == 0 ? t1 : t1;
+      }}
+  }
+}],
 ["dart.core", "dart:core", , P, {
   "^": "",
   Error_safeToString: function(object) {
@@ -5691,10 +6094,10 @@ var dart = [
   },
   identical: [function(a, b) {
     return a == null ? b == null : a === b;
-  }, "call$2", "identical$closure", 4, 0, 21],
+  }, "call$2", "identical$closure", 4, 0, 22],
   identityHashCode: [function(object) {
     return H.objectHashCode(object);
-  }, "call$1", "identityHashCode$closure", 2, 0, 22],
+  }, "call$1", "identityHashCode$closure", 2, 0, 23],
   List_List$from: function(elements, growable, $E) {
     var list, t1;
     list = H.setRuntimeTypeInfo([], [$E]);
@@ -5993,10 +6396,7 @@ var dart = [
   ConcurrentModificationError: {
     "^": "Error;modifiedObject",
     toString$0: function(_) {
-      var t1 = this.modifiedObject;
-      if (t1 == null)
-        return "Concurrent modification during iteration.";
-      return "Concurrent modification during iteration: " + H.S(P.Error_safeToString(t1)) + ".";
+      return "Concurrent modification during iteration: " + H.S(P.Error_safeToString(this.modifiedObject)) + ".";
     },
     static: {ConcurrentModificationError$: function(modifiedObject) {
         return new P.ConcurrentModificationError(modifiedObject);
@@ -6799,7 +7199,7 @@ var dart = [
       else
         return P._wrapToDart(o);
     }
-  }, "call$1", "_convertToDart$closure", 2, 0, 23, 26],
+  }, "call$1", "_convertToDart$closure", 2, 0, 21, 26],
   _wrapToDart: function(o) {
     if (typeof o == "function")
       return P._getDartProxy(o, $.get$_DART_CLOSURE_PROPERTY_NAME(), new P._wrapToDart_closure());
@@ -7301,38 +7701,41 @@ var dart = [
   },
   main_closure: {
     "^": "Closure:2;_captured_w_0",
-    call$1: [function(m) {
-      var t1, data;
-      t1 = J.getInterceptor$x(m);
-      switch (J.$index$asx(t1.get$data(m), "Typ")) {
+    call$1: [function(_m) {
+      var t1, msg, data;
+      t1 = J.getInterceptor$x(_m);
+      P.print(t1.get$data(_m));
+      msg = C.JsonCodec_null_null.decode$1(t1.get$data(_m));
+      t1 = J.getInterceptor$asx(msg);
+      switch (t1.$index(msg, "Type")) {
         case "init":
           P.print("worker initialized, sending responce...");
-          t1 = P.LinkedHashMap_LinkedHashMap$_literal(["Typ", "init"], null, null);
+          t1 = C.JsonCodec_null_null.encode$1(P.LinkedHashMap_LinkedHashMap$_literal(["Type", "init"], null, null));
           this._captured_w_0.inner.postMessage(t1);
           break;
         case "data":
           P.print("data received");
-          data = new Uint8Array(H._ensureNativeList(M._CryptoUtils_base64StringToBytes(J.$index$asx(t1.get$data(m), "Data"))));
+          data = new Uint8Array(H._ensureNativeList(M._CryptoUtils_base64StringToBytes(t1.$index(msg, "Data"))));
           $.get$context().callMethod$2("saveAs", [W.Blob_Blob([data], "application/octet-stream", null), "report.odf"]);
           break;
         default:
-          throw H.wrapException(P.ArgumentError$(J.$index$asx(t1.get$data(m), "Typ")));
+          throw H.wrapException(P.ArgumentError$(t1.$index(msg, "Type")));
       }
     }, null, null, 2, 0, null, 27, "call"]
   },
   main_closure0: {
     "^": "Closure:2;_captured_w_1",
     call$1: [function(m) {
-      var t1 = P.LinkedHashMap_LinkedHashMap$_literal(["Typ", "get", "Param", "demo"], null, null);
+      var t1 = C.JsonCodec_null_null.encode$1(P.LinkedHashMap_LinkedHashMap$_literal(["Type", "get", "Param", "demo"], null, null));
       this._captured_w_1.inner.postMessage(t1);
-    }, null, null, 2, 0, null, 27, "call"]
+    }, null, null, 2, 0, null, 28, "call"]
   },
   main_closure1: {
     "^": "Closure:2;_captured_w_2",
     call$1: [function(m) {
-      var t1 = P.LinkedHashMap_LinkedHashMap$_literal(["Typ", "get", "Param", "report"], null, null);
+      var t1 = C.JsonCodec_null_null.encode$1(P.LinkedHashMap_LinkedHashMap$_literal(["Type", "get", "Param", "report"], null, null));
       this._captured_w_2.inner.postMessage(t1);
-    }, null, null, 2, 0, null, 27, "call"]
+    }, null, null, 2, 0, null, 28, "call"]
   }
 },
 1],
@@ -7644,6 +8047,9 @@ C.JS_CONST_rr7 = function(hooks) {
   hooks.getTag = getTagFixed;
   hooks.prototypeForTag = prototypeForTagFixed;
 };
+C.JsonCodec_null_null = new P.JsonCodec(null, null);
+C.JsonDecoder_null = new P.JsonDecoder(null);
+C.JsonEncoder_null_null = new P.JsonEncoder(null, null);
 C.List_empty = Isolate.makeConstantList([]);
 C.List_q3m = Isolate.makeConstantList([-2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -1, -2, -2, -1, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, 62, -2, 62, -2, 63, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -2, -2, -2, 0, -2, -2, -2, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -2, -2, -2, -2, 63, -2, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2]);
 C.Symbol_call = new H.Symbol0("call");
@@ -7792,6 +8198,7 @@ init.metadata = ["object",
 "self",
 "arguments",
 "o",
+"_m",
 "m",
 ];
 init.types = [{func: ""},
@@ -7815,9 +8222,9 @@ init.types = [{func: ""},
 {func: "", void: true, args: [{func: "", void: true}]},
 {func: "", void: true, args: [,]},
 {func: "", ret: P.bool, args: [,,]},
+{func: "", ret: P.Object, args: [,]},
 {func: "", ret: P.bool, args: [P.Object, P.Object]},
 {func: "", ret: P.$int, args: [P.Object]},
-{func: "", ret: P.Object, args: [,]},
 ];
 $ = null;
 Isolate = Isolate.$finishIsolateConstructor(Isolate);

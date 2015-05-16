@@ -2,6 +2,7 @@ import 'dart:html';
 import 'package:crypto/crypto.dart';
 import 'dart:typed_data';
 import 'dart:js';
+import 'dart:convert';
 
 class OdfWorker{
 
@@ -23,27 +24,29 @@ class OdfWorker{
 void main() {
   var w = new OdfWorker();
 
-  w.listen((m){
-    switch(m.data["Typ"]){
+  w.listen((_m){
+    print(_m.data);
+    var msg = JSON.decode(_m.data);
+    switch(msg["Type"]){
       case "init":
         print("worker initialized, sending responce...");
-        w.postMessage({'Typ': 'init'});
+        w.postMessage(JSON.encode({"Type": "init"}));
         break;
       case "data":
         print("data received");
-        Uint8List data = new Uint8List.fromList(CryptoUtils.base64StringToBytes(m.data["Data"]));
+        Uint8List data = new Uint8List.fromList(CryptoUtils.base64StringToBytes(msg["Data"]));
         context.callMethod("saveAs",  [new Blob([data], "application/octet-stream"), "report.odf"]);
         break;
-      default: throw new ArgumentError(m.data["Typ"]);
+      default: throw new ArgumentError(msg["Type"]);
     }
   });
 
   querySelector("#do-demo").onClick.listen((m){
-    w.postMessage({'Typ': 'get', 'Param': 'demo'});
+    w.postMessage(JSON.encode({"Type": "get", "Param": "demo"}));
   });
 
   querySelector("#do-report").onClick.listen((m){
-    w.postMessage({'Typ': 'get', 'Param': 'report'});
+    w.postMessage(JSON.encode({"Type": "get", "Param": "report"}));
   });
 
 }
