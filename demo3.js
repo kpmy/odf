@@ -34421,11 +34421,12 @@ $packages["main"] = (function() {
 			var $ptr, _r, data, err, m, oEvent, $s, $r;
 			/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; data = $f.data; err = $f.err; m = $f.m; oEvent = $f.oEvent; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 			data = $internalize(oEvent.data, $emptyInterface);
+			$r = log.Println(new sliceType$1([data])); /* */ $s = 1; case 1: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 			m = new Msg.ptr("", "", "");
-			_r = mapstructure.Decode(data, m); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+			_r = mapstructure.Decode(data, m); /* */ $s = 2; case 2: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 			err = _r;
-			$r = assert.For($interfaceIsEqual(err, $ifaceNil), 40, new sliceType$1([])); /* */ $s = 2; case 2: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-			$r = handler(m); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+			$r = assert.For($interfaceIsEqual(err, $ifaceNil), 40, new sliceType$1([])); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+			$r = handler(m); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 			/* */ $s = -1; case -1: } return; } if ($f === undefined) { $f = { $blk: $b }; } $f.$ptr = $ptr; $f._r = _r; $f.data = data; $f.err = err; $f.m = m; $f.oEvent = oEvent; $f.$s = $s; $f.$r = $r; return $f;
 		}), funcType);
 	};
