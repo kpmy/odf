@@ -7,3 +7,5 @@ environment:
   sdk: '>=1.0.0 <2.0.0'
 dependencies:
   browser: '>=0.10.0 <0.11.0'
+  crypto:
+    git: https://github.com/dart-lang/crypto

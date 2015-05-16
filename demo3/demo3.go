@@ -1,16 +1,22 @@
 package main
 
 import (
+	"bytes"
+	"encoding/base64"
 	"github.com/gopherjs/gopherjs/js"
 	"github.com/kpmy/ypk/assert"
+	"github.com/kpmy/ypk/halt"
 	"github.com/mitchellh/mapstructure"
+	"io"
 	"log"
 	_ "odf/model/stub" //don't forget pimpl
 	"sync"
 )
 
 type Msg struct {
-	Typ string
+	Typ   string
+	Param string
+	Data  string
 }
 
 type Handler func(m *Msg)
@@ -27,7 +33,21 @@ func busHandler(m *Msg) {
 func handle(m *Msg) {
 	switch m.Typ {
 	case "init":
-		panic("not implemented")
+		log.Println("message bus connected")
+	case "get":
+		var rd io.Reader
+		if m.Param == "demo" {
+			rd, _ = demo()
+		} else if m.Param == "report" {
+			rd, _ = report()
+		}
+		buf := bytes.NewBuffer(nil)
+		io.Copy(buf, rd)
+		m := &Msg{Typ: "data"}
+		m.Data = base64.StdEncoding.EncodeToString(buf.Bytes())
+		Process(m)
+	default:
+		halt.As(100, "not implemented", m.Typ)
 	}
 }
 
