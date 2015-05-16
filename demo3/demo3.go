@@ -3,10 +3,10 @@ package main
 import (
 	"bytes"
 	"encoding/base64"
+	"encoding/json"
 	"github.com/gopherjs/gopherjs/js"
 	"github.com/kpmy/ypk/assert"
 	"github.com/kpmy/ypk/halt"
-	"github.com/mitchellh/mapstructure"
 	"io"
 	"log"
 	_ "odf/model/stub" //don't forget pimpl
@@ -14,7 +14,7 @@ import (
 )
 
 type Msg struct {
-	Typ   string
+	Type  string
 	Param string
 	Data  string
 }
@@ -31,7 +31,7 @@ func busHandler(m *Msg) {
 
 //этот хэндлер обрабатывает сообщения в рамках главной горутины
 func handle(m *Msg) {
-	switch m.Typ {
+	switch m.Type {
 	case "init":
 		log.Println("message bus connected")
 	case "get":
@@ -43,24 +43,27 @@ func handle(m *Msg) {
 		}
 		buf := bytes.NewBuffer(nil)
 		io.Copy(buf, rd)
-		m := &Msg{Typ: "data"}
+		m := &Msg{Type: "data"}
 		m.Data = base64.StdEncoding.EncodeToString(buf.Bytes())
 		Process(m)
 	default:
-		halt.As(100, "not implemented", m.Typ)
+		halt.As(100, "not implemented", m.Type)
 	}
 }
 
 func Process(m *Msg) {
 	assert.For(m != nil, 20)
-	js.Global.Call("postMessage", m)
+	s, _ := json.Marshal(m)
+	js.Global.Call("postMessage", string(s))
 }
 
 func Init(handler Handler) {
 	js.Global.Set("onmessage", func(oEvent *js.Object) {
-		data := oEvent.Get("data").Interface()
+		_data := oEvent.Get("data").Interface().(string)
+		log.Println(_data)
 		m := &Msg{}
-		err := mapstructure.Decode(data, m)
+		err := json.Unmarshal([]byte(_data), m)
+		log.Println(m)
 		assert.For(err == nil, 40)
 		handler(m)
 	})
@@ -73,7 +76,7 @@ func main() {
 	wg.Add(1)
 	go func(wg *sync.WaitGroup, c chan *Msg) {
 		log.Println("done")
-		Process(&Msg{Typ: "init"})
+		Process(&Msg{Type: "init"})
 		for {
 			select {
 			case m := <-c:

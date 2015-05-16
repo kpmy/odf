@@ -57,3 +57,9 @@ More examples in demo/report.go
     		defer output.Close()
     	}
     }
+
+## Moar
+
+It works in browser now. Got Demo3, GopherJS + Dart.
+
+[http://kpmy.github.io/odf/](http://kpmy.github.io/odf/)

@@ -75,7 +75,3 @@ func (t *TextAttributes) Italic() *TextAttributes {
 	t.italic = true
 	return t
 }
-
-func init() {
-	New = model.LeafFactory
-}

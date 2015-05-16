@@ -86,3 +86,9 @@ func triggerBoolAttr(n model.AttrName) func(v value) {
 		}
 	}
 }
+
+func init() {
+	New = func(n model.LeafName) model.Leaf {
+		return model.LeafFactory(n)
+	}
+}
