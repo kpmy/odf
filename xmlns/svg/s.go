@@ -1,8 +1,8 @@
 package svg
 
 import (
-	"odf/model"
-	"odf/xmlns"
+	"github.com/kpmy/odf/model"
+	"github.com/kpmy/odf/xmlns"
 )
 
 const (

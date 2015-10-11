@@ -1,11 +1,11 @@
 package main
 
 import (
-	"odf/generators"
-	"odf/mappers"
-	"odf/model"
-	_ "odf/model/stub" //don't forget pimpl
-	"odf/xmlns"
+	"github.com/kpmy/odf/generators"
+	"github.com/kpmy/odf/mappers"
+	"github.com/kpmy/odf/model"
+	_ "github.com/kpmy/odf/model/stub" //don't forget pimpl
+	"github.com/kpmy/odf/xmlns"
 	"os"
 )
 

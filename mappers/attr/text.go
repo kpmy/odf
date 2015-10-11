@@ -1,11 +1,11 @@
 package attr
 
 import (
+	"github.com/kpmy/odf/model"
+	"github.com/kpmy/odf/xmlns/fo"
+	"github.com/kpmy/odf/xmlns/style"
+	"github.com/kpmy/odf/xmlns/text"
 	"image/color"
-	"odf/model"
-	"odf/xmlns/fo"
-	"odf/xmlns/style"
-	"odf/xmlns/text"
 )
 
 //TextAttributes is a Text Family fluent style builder

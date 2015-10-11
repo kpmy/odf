@@ -1,10 +1,10 @@
 package mappers
 
 import (
+	"github.com/kpmy/odf/mappers/attr"
+	"github.com/kpmy/odf/model"
+	"github.com/kpmy/odf/xmlns/text"
 	"github.com/kpmy/ypk/assert"
-	"odf/mappers/attr"
-	"odf/model"
-	"odf/xmlns/text"
 )
 
 //ParaMapper writes and controls text content in document model

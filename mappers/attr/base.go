@@ -1,8 +1,8 @@
 package attr
 
 import (
+	"github.com/kpmy/odf/model"
 	"github.com/kpmy/ypk/assert"
-	"odf/model"
 )
 
 //New is shortcut for factory function model.ModelFactory

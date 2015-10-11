@@ -1,10 +1,10 @@
 package mappers
 
 import (
+	"github.com/kpmy/odf/mappers/attr"
+	"github.com/kpmy/odf/model"
+	"github.com/kpmy/odf/xmlns/table"
 	"github.com/kpmy/ypk/assert"
-	"odf/mappers/attr"
-	"odf/model"
-	"odf/xmlns/table"
 )
 
 //Table structure holds the table structure and identifies it for TableMapper

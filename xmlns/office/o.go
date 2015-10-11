@@ -1,7 +1,7 @@
 package office
 
 import (
-	"odf/model"
+	"github.com/kpmy/odf/model"
 )
 
 const (

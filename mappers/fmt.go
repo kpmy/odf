@@ -1,12 +1,12 @@
 package mappers
 
 import (
+	"github.com/kpmy/odf/mappers/attr"
+	"github.com/kpmy/odf/model"
+	"github.com/kpmy/odf/xmlns"
+	"github.com/kpmy/odf/xmlns/office"
 	"github.com/kpmy/ypk/assert"
 	"github.com/kpmy/ypk/halt"
-	"odf/mappers/attr"
-	"odf/model"
-	"odf/xmlns"
-	"odf/xmlns/office"
 	"reflect"
 )
 

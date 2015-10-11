@@ -4,13 +4,13 @@ import (
 	"archive/zip"
 	"bytes"
 	"encoding/xml"
+	"github.com/kpmy/odf/model"
+	"github.com/kpmy/odf/xmlns"
+	"github.com/kpmy/odf/xmlns/office"
+	"github.com/kpmy/odf/xmlns/urn"
 	"github.com/kpmy/ypk/assert"
 	"github.com/kpmy/ypk/halt"
 	"io"
-	"odf/model"
-	"odf/xmlns"
-	"odf/xmlns/office"
-	"odf/xmlns/urn"
 )
 
 //Embeddable is any object that can provide []byte data for embedding in document package file (pictures for example)

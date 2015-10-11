@@ -1,13 +1,13 @@
 package mappers
 
 import (
+	"github.com/kpmy/odf/mappers/attr"
+	"github.com/kpmy/odf/model"
+	"github.com/kpmy/odf/xmlns/office"
+	"github.com/kpmy/odf/xmlns/style"
+	"github.com/kpmy/odf/xmlns/svg"
+	"github.com/kpmy/odf/xmlns/text"
 	"github.com/kpmy/ypk/halt"
-	"odf/mappers/attr"
-	"odf/model"
-	"odf/xmlns/office"
-	"odf/xmlns/style"
-	"odf/xmlns/svg"
-	"odf/xmlns/text"
 	"strconv"
 )
 

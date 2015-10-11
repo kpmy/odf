@@ -3,13 +3,13 @@ package mappers
 import (
 	"crypto/md5"
 	"encoding/binary"
+	"github.com/kpmy/odf/xmlns"
+	"github.com/kpmy/odf/xmlns/draw"
+	"github.com/kpmy/odf/xmlns/svg"
+	"github.com/kpmy/odf/xmlns/text"
+	"github.com/kpmy/odf/xmlns/xlink"
 	"io"
 	"math/rand"
-	"odf/xmlns"
-	"odf/xmlns/draw"
-	"odf/xmlns/svg"
-	"odf/xmlns/text"
-	"odf/xmlns/xlink"
 	"strconv"
 	"time"
 )

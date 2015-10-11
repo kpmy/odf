@@ -1,11 +1,11 @@
 package stub
 
 import (
+	"github.com/kpmy/odf/model"
+	"github.com/kpmy/odf/xmlns"
 	"github.com/kpmy/ypk/assert"
 	"github.com/kpmy/ypk/halt"
 	"image/color"
-	"odf/model"
-	"odf/xmlns"
 	"reflect"
 )
 

@@ -1,16 +1,16 @@
 package odf
 
 import (
+	"github.com/kpmy/odf/generators"
+	"github.com/kpmy/odf/mappers"
+	"github.com/kpmy/odf/mappers/attr"
+	"github.com/kpmy/odf/model"
+	_ "github.com/kpmy/odf/model/stub"
+	"github.com/kpmy/odf/xmlns"
+	"github.com/kpmy/odf/xmlns/fo"
+	"github.com/kpmy/odf/xmlns/table"
 	"github.com/kpmy/ypk/assert"
 	"image/color"
-	"odf/generators"
-	"odf/mappers"
-	"odf/mappers/attr"
-	"odf/model"
-	_ "odf/model/stub"
-	"odf/xmlns"
-	"odf/xmlns/fo"
-	"odf/xmlns/table"
 	"os"
 	"testing"
 )

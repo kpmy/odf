@@ -2,11 +2,11 @@ package stub
 
 import (
 	"encoding/xml"
+	"github.com/kpmy/odf/model"
+	"github.com/kpmy/odf/xmlns"
+	"github.com/kpmy/odf/xmlns/office"
+	"github.com/kpmy/odf/xmlns/urn"
 	"github.com/kpmy/ypk/assert"
-	"odf/model"
-	"odf/xmlns"
-	"odf/xmlns/office"
-	"odf/xmlns/urn"
 )
 
 type root struct {

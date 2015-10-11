@@ -2,11 +2,11 @@ package main
 
 import (
 	"bytes"
+	"github.com/kpmy/odf/generators"
+	"github.com/kpmy/odf/mappers"
+	"github.com/kpmy/odf/model"
+	"github.com/kpmy/odf/xmlns"
 	"io"
-	"odf/generators"
-	"odf/mappers"
-	"odf/model"
-	"odf/xmlns"
 )
 
 func demo() (io.Reader, error) {

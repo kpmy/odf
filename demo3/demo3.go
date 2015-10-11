@@ -5,11 +5,11 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"github.com/gopherjs/gopherjs/js"
+	_ "github.com/kpmy/odf/model/stub" //don't forget pimpl
 	"github.com/kpmy/ypk/assert"
 	"github.com/kpmy/ypk/halt"
 	"io"
 	"log"
-	_ "odf/model/stub" //don't forget pimpl
 	"sync"
 )
 

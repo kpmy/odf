@@ -1,10 +1,10 @@
 package attr
 
 import (
-	"odf/model"
-	"odf/xmlns/fo"
-	"odf/xmlns/style"
-	"odf/xmlns/text"
+	"github.com/kpmy/odf/model"
+	"github.com/kpmy/odf/xmlns/fo"
+	"github.com/kpmy/odf/xmlns/style"
+	"github.com/kpmy/odf/xmlns/text"
 )
 
 //ParagraphAttributes is ODF Paragraph Family style fluent builder
