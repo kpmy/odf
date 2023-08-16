@@ -69,6 +69,7 @@ func docParts(m model.Model) (ret Parts) {
 //GeneratePackage builds a zip-archived content of document model and embedded files and writes content to target Writer
 func GeneratePackage(m model.Model, embed map[string]Embeddable, out io.Writer, mimetype xmlns.Mime) {
 	z := zip.NewWriter(out)
+	defer z.Close()
 	mime := &zip.FileHeader{Name: xmlns.Mimetype, Method: zip.Store} //файл mimetype не надо сжимать, режим Store
 	if w, err := z.CreateHeader(mime); err == nil {
 		bytes.NewBufferString(string(mimetype)).WriteTo(w)
@@ -100,5 +101,4 @@ func GeneratePackage(m model.Model, embed map[string]Embeddable, out io.Writer, 
 		err = enc.Encode(manifest)
 		assert.For(err == nil, 60, err)
 	}
-	z.Close()
 }
